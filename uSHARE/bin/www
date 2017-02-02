@@ -30,6 +30,13 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /**
+ * Hook up socket.io
+ */
+
+var io = app.io;
+io.listen(server);
+
+/**
  * Normalize a port into a number, string, or false.
  */
 
