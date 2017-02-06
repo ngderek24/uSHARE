@@ -1,5 +1,6 @@
 extends layout
 
 block content
+  script(src='/javascripts/titleLarge.js')
   h1= title
-  p Welcome to #{title}
+  title-large(title=title)

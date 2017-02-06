@@ -19,11 +19,7 @@ acorn-globals@^3.0.0:
   dependencies:
     acorn "^4.0.4"
 
-acorn@^2.1.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-2.7.0.tgz#ab6e7d9d886aaca8b085bc3312b79a198433f0e7"
-
-acorn@^3.1.0:
+acorn@^3.1.0, acorn@~3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
 
@@ -343,10 +339,11 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
 constantinople@^3.0.1:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/constantinople/-/constantinople-3.0.2.tgz#4b945d9937907bcd98ee575122c3817516544141"
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/constantinople/-/constantinople-3.1.0.tgz#7569caa8aa3f8d5935d62e1fa96f9f702cd81c79"
   dependencies:
-    acorn "^2.1.0"
+    acorn "^3.1.0"
+    is-expression "^2.0.1"
 
 content-disposition@0.5.2:
   version "0.5.2"
@@ -806,6 +803,13 @@ is-ci@^1.0.10:
   dependencies:
     ci-info "^1.0.0"
 
+is-expression@^2.0.1:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/is-expression/-/is-expression-2.1.0.tgz#91be9d47debcfef077977e9722be6dcfb4465ef0"
+  dependencies:
+    acorn "~3.3.0"
+    object-assign "^4.0.1"
+
 is-expression@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/is-expression/-/is-expression-3.0.0.tgz#39acaa6be7fd1f3471dc42c7416e61c24317ac9f"
@@ -1091,13 +1095,7 @@ on-headers@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/on-headers/-/on-headers-1.0.1.tgz#928f5d0f470d49342651ea6794b0857c100693f7"
 
-once@^1.3.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
-  dependencies:
-    wrappy "1"
-
-once@~1.3.0:
+once@^1.3.0, once@~1.3.0:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/once/-/once-1.3.3.tgz#b2e261557ce4c314ec8304f3fa82663e4297ca20"
   dependencies:
@@ -1219,7 +1217,7 @@ pug-error@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/pug-error/-/pug-error-1.3.2.tgz#53ae7d9d29bb03cf564493a026109f54c47f5f26"
 
-pug-filters@^2.1.1:
+pug-filters@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/pug-filters/-/pug-filters-2.1.1.tgz#10ab2b6d7e5aeec99cad28a1e4c8085f823fc754"
   dependencies:
@@ -1231,22 +1229,22 @@ pug-filters@^2.1.1:
     resolve "^1.1.6"
     uglify-js "^2.6.1"
 
-pug-lexer@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/pug-lexer/-/pug-lexer-3.0.0.tgz#173b00a082e5684a60eb0deb5aae4e514a172e26"
+pug-lexer@^2.3.1:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/pug-lexer/-/pug-lexer-2.3.2.tgz#68b19d96ea5dc0e4a86148b01cb966c17815a614"
   dependencies:
     character-parser "^2.1.1"
     is-expression "^3.0.0"
     pug-error "^1.3.2"
 
-pug-linker@^2.0.2:
+pug-linker@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/pug-linker/-/pug-linker-2.0.2.tgz#1deca67d741fab46b028c1366f178fbaee620233"
   dependencies:
     pug-error "^1.3.2"
     pug-walk "^1.1.1"
 
-pug-load@^2.0.5:
+pug-load@^2.0.4:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/pug-load/-/pug-load-2.0.5.tgz#eaaf46ccace8aff7461e0fad1e2b67305514f2c6"
   dependencies:
@@ -1275,14 +1273,14 @@ pug-walk@^1.1.1:
   resolved "https://registry.yarnpkg.com/pug-walk/-/pug-walk-1.1.1.tgz#b9976240d213692e6993fbc13ae1205c54052efe"
 
 pug@^2.0.0-beta11:
-  version "2.0.0-beta11"
-  resolved "https://registry.yarnpkg.com/pug/-/pug-2.0.0-beta11.tgz#15abe6af5004c7e2cf4613e4b27465c9546b5f01"
+  version "2.0.0-beta9"
+  resolved "https://registry.yarnpkg.com/pug/-/pug-2.0.0-beta9.tgz#158ec6dbace5bb78f2b25e8825477d03ea6e14b0"
   dependencies:
     pug-code-gen "^1.1.1"
-    pug-filters "^2.1.1"
-    pug-lexer "^3.0.0"
-    pug-linker "^2.0.2"
-    pug-load "^2.0.5"
+    pug-filters "^2.1.0"
+    pug-lexer "^2.3.1"
+    pug-linker "^2.0.1"
+    pug-load "^2.0.4"
     pug-parser "^2.0.2"
     pug-runtime "^2.0.3"
     pug-strip-comments "^1.0.2"
