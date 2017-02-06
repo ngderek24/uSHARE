@@ -1,0 +1,3 @@
+div(class="container-centered-horizontal text-centered")
+  form(ng-repeat="link in links" action="{{ link.endpoint }}")
+    input(class="button-default" type="submit" value="{{ link.name }}")

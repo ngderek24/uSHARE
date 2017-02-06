@@ -1,6 +1,6 @@
 extends layout
 
 block content
-  script(src='/javascripts/titleLarge.js')
-  h1= title
-  title-large(title=title)
+  div(class="container-centered-vertical")
+    page-header(title=title)
+    button-bar(links=links)
