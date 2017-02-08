@@ -22,3 +22,17 @@ a {
 .container-centered-horizontal{
 	margin: 0 auto;
 }
+
+.container-padded{
+	max-width: 1000px;
+	padding: 20px 50px;
+}
+
+.table-column-small{
+	width: 50px;
+	text-align: center;
+}
+
+/*table th{
+	text-align: center;
+}*/

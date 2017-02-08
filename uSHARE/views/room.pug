@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  div(class="container-centered-vertical")
+    script
+    page-header(title=title)
+    div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + '"' + role + '")')
+      table(class="table table-striped")
+        thead
+          tr
+            th Track
+            th Artist
+            th(class="table-column-small") Remove
+        tbody          
+          tr(ng-repeat="track in tracks" id="{{track.id}}")
+            td {{::track.name}}
+            td {{::track.artist}}
+            td(class="table-column-small")
+              button(class="button-default" ng-click="remove(track.id)") X
+      form(class="container-centered-horizontal text-centered" action="/")
+        input(class="button-default" type="submit" ng-if="role=='host'" value="Close room")
+        input(class="button-default" type="submit" ng-if="role=='guest'" value="Leave room")

@@ -8,9 +8,23 @@ var links = [
   				  endpoint: "/auth" }
   			] 
 
+var dummy_tracks = [
+											{ id: 123,
+												name: "Silver Lining",
+												artist: "Oddisee"
+											},
+											{ id: 234123,
+												name: "All the Secrets",
+												artist: "Flying Lotus"
+											}
+									]
+
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'uSHARE',
-  						links: links
+  res.render('room', { title: 'uSHARE',
+  						links: links,
+  						tracks: JSON.stringify(dummy_tracks),
+  						role: "guest",
+  						uid: 123243434
   					});
 });
 
