@@ -10,6 +10,8 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var socketTest = require('./routes/socketTest');
 
+var socketMgr = require('./socketMgr.js')
+
 //Create Express app object
 var app = express();
 
@@ -61,13 +63,36 @@ app.use(function(err, req, res, next) {
 
 //Socket testing 
 //TODO: move to separate js file
-io.on("connection", function(socket){
-	console.log("New user connection.");
+// io.on("connection", function(socket){
+// 	console.log("New user connection.");
 
-	socket.emit('message_to_client', { msg: 'Testing 1 2 3' });
-	socket.on('message_to_server', function(data){
-		console.log('Message from client: ' + data.msg)
-	});
+// 	socket.emit('playlist_changed', { track: { id: 123,
+//                                              name: "Silver Lining",
+//                                              artist: "Oddisee"
+//                                            },
+//                                     status: "add"
+//                                   });
+// 	socket.on('message_to_server', function(data){
+// 		console.log('Message from client: ' + data.msg)
+// 	});
+// });
+io.on("connection", function(socket){
+  var lastConnected = socketMgr.lastConnected();
+  console.log("Socket connected from User " + lastConnected.uid + " to Room " + lastConnected.rid + ". There are now " + socketMgr.count() + " connections.");
+  socket.on('remove_track', function(data){
+    socket.emit('playlist_changed', { track: { id: data.id
+                                             },
+                                      status: "remove"
+                                    });
+    socket.emit('removal_result', { success: true
+                                  });
+  });
+
+  socket.on('disconnect', function(){    
+    socketMgr.remove(lastConnected.uid);
+    console.log("Socket (User: " + lastConnected.uid + " Room: " + lastConnected.rid + ") connected. There are now " + socketMgr.count() + " connections.");
+  })
 });
+
 
 module.exports = app;

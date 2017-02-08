@@ -1,42 +1,58 @@
 angular.module("ushare").controller("roomController", function($scope, $http, $window) {
   $scope.tracks = new Array();
-  $scope.role = "";
-  $scope.socket = io('http://localhost:3000');
+  $scope.role = "";  
+  $scope.socket;
 
-  $scope.initRoom = function(tracks, role){
+  $scope.initRoom = function(tracks, metadata){
     /*
       Should actually call internal API to fetch playlist tracks here for better accuracy rather than
       having router pass through playlist data
     */
     $scope.tracks = tracks;
-    $scope.role = role;
+    $scope.role = metadata.role;
+    $scope.uid = metadata.uid;
+    $scope.rid = metadata.rid;
+
+    $scope.socket = io('http://localhost:3000', { query: "uid=" + $scope.uid +
+                                                         "&rid=" + $scope.rid });
+
+    $scope.socket.on('room_closed', function (data) {
+    
+    });
+
+    $scope.socket.on('playlist_changed', function(data){
+      if(data.status == "add"){
+        console.log("Track " + data.track.id + " was added.");
+        $scope.tracks.push(data.track);
+        $scope.$apply();
+      }
+      else{
+        for(var i=0; i < $scope.tracks.length; i++){
+          if($scope.tracks[i].id == data.track.id){
+            $('#' + data.track.id).fadeOut(300, function(){
+                console.log("Track " + data.track.id + " was removed.");
+                $scope.tracks.splice(i, 1);  
+                $scope.$apply();          
+            })
+
+            break;
+          }          
+        }
+      }      
+    });
+
+    $scope.socket.on('removal_result', function(data){
+      if(data.success){
+        console.log("REMOVAL SUCCESS");
+      }
+      else{
+        //error handling
+        console.log("REMOVAL FAILURE");
+      }
+    });
   }
 
   $scope.remove = function(id){
     $scope.socket.emit('remove_track', { id: id });
-
-    //REMOVE THIS LATER
-    $('#' + id).fadeOut(300, function(){
-      $(this).remove();
-    })
   }
-
-  $scope.socket.on('room_closed', function (data) {
-    
-  });
-
-  $scope.socket.on('playlist_changed', function(data){
-
-  });
-
-  $scope.socket.on('removal_result', function(data){
-    if(data.success){
-      $('#' + id).fadeOut(300, function(){
-        $(this).remove();
-      })
-    }
-    else{
-      //error handling
-    }
-  });
 });

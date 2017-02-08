@@ -4,7 +4,7 @@ block content
   div(class="container-centered-vertical")
     script
     page-header(title=title)
-    div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + '"' + role + '")')
+    div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + metadata + ')')
       table(class="table table-striped")
         thead
           tr

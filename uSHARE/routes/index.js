@@ -19,12 +19,18 @@ var dummy_tracks = [
 											}
 									]
 
+var dummy_metadata = {
+  							role: "guest",
+  							uid: 123243434,
+  							rid: 1243254305943,
+  						}
+
 router.get('/', function(req, res, next) {
   res.render('room', { title: 'uSHARE',
   						links: links,
+  						// tracks: JSON.stringify([]),
   						tracks: JSON.stringify(dummy_tracks),
-  						role: "guest",
-  						uid: 123243434
+  						metadata: JSON.stringify(dummy_metadata), 						
   					});
 });
 
