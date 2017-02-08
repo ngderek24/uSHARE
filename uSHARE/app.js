@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var socket_io = require("socket.io");
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 var socketTest = require('./routes/socketTest');
 
 //Create Express app object
@@ -38,7 +37,6 @@ app.get('/partials/:name', function(req, res){
 
 // set routers
 app.use('/', index);
-app.use('/users', users);
 app.use('/socketTest', socketTest);
 
 // catch 404 and forward to error handler
