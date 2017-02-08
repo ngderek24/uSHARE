@@ -34,4 +34,17 @@ router.get('/', function(req, res, next) {
   					});
 });
 
+router.get('/create', function(req, res, next) {
+  res.render('create_room');
+  
+});
+
+router.get('/join', function(req, res, next) {
+  res.render('join_room');
+});
+
+router.get('/:access_code', function(req, res, next) {
+  res.send(req.params.access_code);
+});
+
 module.exports = router;
