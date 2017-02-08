@@ -7,9 +7,6 @@ var bodyParser = require('body-parser');
 var socket_io = require("socket.io");
 
 var index = require('./routes/index');
-var socketTest = require('./routes/socketTest');
-
-var socketMgr = require('./socketMgr.js')
 
 //Create Express app object
 var app = express();
@@ -39,7 +36,6 @@ app.get('/partials/:name', function(req, res){
 
 // set routers
 app.use('/', index);
-app.use('/socketTest', socketTest);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -75,20 +71,37 @@ app.use(function(err, req, res, next) {
 // 	});
 // });
 io.on("connection", function(socket){
-  var lastConnected = socketMgr.lastConnected();
-  console.log("Socket connected from User " + lastConnected.uid + " to Room " + lastConnected.rid + ". There are now " + socketMgr.count() + " connections.");
+  var room = socket.handshake.query['rid'];
+  socket.join(room);
+  
+  socket.on('add_track', function(data){
+    socket.to(room).emit('playlist_changed', { track: { id: 123,
+                                                        name: "Silver Lining",
+                                                        artist: "Oddisee"                                                      
+                                                      },
+                                               status: "add"
+                                             });
+    socket.emit('playlist_changed', { track: { id: 123,
+                                         name: "Silver Lining",
+                                         artist: "Oddisee"
+                                        },
+                                      status: "add"
+                                    });
+  });
+
   socket.on('remove_track', function(data){
+    socket.to(room).emit('playlist_changed', { track: { id: data.id
+                                                      },
+                                               status: "remove"
+                                             });
     socket.emit('playlist_changed', { track: { id: data.id
-                                             },
+                                           },
                                       status: "remove"
                                     });
-    socket.emit('removal_result', { success: true
-                                  });
   });
 
   socket.on('disconnect', function(){    
-    socketMgr.remove(lastConnected.uid);
-    console.log("Socket (User: " + lastConnected.uid + " Room: " + lastConnected.rid + ") connected. There are now " + socketMgr.count() + " connections.");
+    socket.leave(room);
   })
 });
 

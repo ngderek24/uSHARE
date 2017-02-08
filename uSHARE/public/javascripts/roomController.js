@@ -20,6 +20,7 @@ angular.module("ushare").controller("roomController", function($scope, $http, $w
     
     });
 
+    //When another user did somthing to the playlist
     $scope.socket.on('playlist_changed', function(data){
       if(data.status == "add"){
         console.log("Track " + data.track.id + " was added.");
@@ -40,19 +41,13 @@ angular.module("ushare").controller("roomController", function($scope, $http, $w
         }
       }      
     });
-
-    $scope.socket.on('removal_result', function(data){
-      if(data.success){
-        console.log("REMOVAL SUCCESS");
-      }
-      else{
-        //error handling
-        console.log("REMOVAL FAILURE");
-      }
-    });
   }
 
   $scope.remove = function(id){
     $scope.socket.emit('remove_track', { id: id });
+  }
+
+  $scope.add = function(id){
+    $scope.socket.emit('add_track', { id: id });
   }
 });

@@ -25,7 +25,11 @@ a {
 
 .container-padded{
 	max-width: 1000px;
-	padding: 20px 50px;
+	padding: 0px 50px 20px;
+}
+
+.container-padded-top{
+	padding-top: 100px;
 }
 
 .table-column-small{
@@ -33,6 +37,12 @@ a {
 	text-align: center;
 }
 
+.table-container{
+	max-height: calc(100vh - 250px);
+	overflow-y: auto;
+}
+
+.padding-bottom-20{}
 /*table th{
 	text-align: center;
 }*/
