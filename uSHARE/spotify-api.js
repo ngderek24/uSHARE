@@ -89,6 +89,31 @@ SpotifyApi.prototype = {
         }
       });
     }
+  },
+
+  createPlaylist: function(userID, playlistName, callback) {
+    var bodyParams = {
+      'name': playlistName,
+      'public': true
+    };
+
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      },
+      body: JSON.stringify(bodyParams)
+    };
+
+    request.post(options, function(error, response, body) {
+      if (error) {
+        console.log(error);
+        callback(error);
+      } else {
+        callback(null, response, body);
+      }
+    });
   }
 };
 
