@@ -11,5 +11,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', spotifyApi.promptLogin);
+router.get('/callback', spotifyApi.requestAccessToken);
 
 module.exports = router;
