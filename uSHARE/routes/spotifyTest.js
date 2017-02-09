@@ -11,6 +11,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', spotifyApi.promptLogin);
+
 router.get('/callback', spotifyApi.requestAccessToken);
+
+router.get('/create', function(req, res, next) {
+  spotifyApi.createPlaylist("122520427", "Does this work", function(error, response, body) {
+    console.log("created!");
+    console.log(body);
+  });
+  res.render('spotifyTest', { title: 'Created a playlist!' });
+});
 
 module.exports = router;
