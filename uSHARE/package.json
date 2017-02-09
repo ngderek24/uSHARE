@@ -12,6 +12,7 @@
     "express": "~4.14.1",
     "morgan": "~1.7.0",
     "pug": "^2.0.0-beta11",
+    "querystring": "^0.2.0",
     "serve-favicon": "~2.3.2",
     "socket.io": "~1.7.2",
     "yarn": "^0.19.1"
