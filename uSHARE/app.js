@@ -7,9 +7,6 @@ var bodyParser = require('body-parser');
 var socket_io = require("socket.io");
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var socketTest = require('./routes/socketTest');
-var spotifyTest = require('./routes/spotifyTest');
 
 //Create Express app object
 var app = express();
@@ -39,9 +36,6 @@ app.get('/partials/:name', function(req, res){
 
 // set routers
 app.use('/', index);
-app.use('/users', users);
-app.use('/socketTest', socketTest);
-app.use('/spotifyTest', spotifyTest);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -63,13 +57,53 @@ app.use(function(err, req, res, next) {
 
 //Socket testing 
 //TODO: move to separate js file
-io.on("connection", function(socket){
-	console.log("New user connection.");
+// io.on("connection", function(socket){
+// 	console.log("New user connection.");
 
-	socket.emit('message_to_client', { msg: 'Testing 1 2 3' });
-	socket.on('message_to_server', function(data){
-		console.log('Message from client: ' + data.msg)
-	});
+// 	socket.emit('playlist_changed', { track: { id: 123,
+//                                              name: "Silver Lining",
+//                                              artist: "Oddisee"
+//                                            },
+//                                     status: "add"
+//                                   });
+// 	socket.on('message_to_server', function(data){
+// 		console.log('Message from client: ' + data.msg)
+// 	});
+// });
+io.on("connection", function(socket){
+  var room = socket.handshake.query['rid'];
+  socket.join(room);
+  
+  socket.on('add_track', function(data){
+    socket.to(room).emit('playlist_changed', { track: { id: 123,
+                                                        name: "Silver Lining",
+                                                        artist: "Oddisee"                                                      
+                                                      },
+                                               status: "add"
+                                             });
+    socket.emit('playlist_changed', { track: { id: 123,
+                                         name: "Silver Lining",
+                                         artist: "Oddisee"
+                                        },
+                                      status: "add"
+                                    });
+  });
+
+  socket.on('remove_track', function(data){
+    socket.to(room).emit('playlist_changed', { track: { id: data.id
+                                                      },
+                                               status: "remove"
+                                             });
+    socket.emit('playlist_changed', { track: { id: data.id
+                                           },
+                                      status: "remove"
+                                    });
+  });
+
+  socket.on('disconnect', function(){    
+    socket.leave(room);
+  })
 });
+
 
 module.exports = app;
