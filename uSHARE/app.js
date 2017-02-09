@@ -9,6 +9,7 @@ var socket_io = require("socket.io");
 var index = require('./routes/index');
 var users = require('./routes/users');
 var socketTest = require('./routes/socketTest');
+var spotifyTest = require('./routes/spotifyTest');
 
 //Create Express app object
 var app = express();
@@ -40,6 +41,7 @@ app.get('/partials/:name', function(req, res){
 app.use('/', index);
 app.use('/users', users);
 app.use('/socketTest', socketTest);
+app.use('/spotifyTest', spotifyTest);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
