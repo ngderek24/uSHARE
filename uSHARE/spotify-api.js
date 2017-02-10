@@ -76,11 +76,12 @@ SpotifyApi.prototype = {
           // });
 
           // We can also pass the token to the browser to make requests from there
-          res.redirect('/#' +
-            querystring.stringify({
-              access_token: accessToken,
-              refresh_token: refreshToken
-            }));
+          // res.redirect('/#' +
+          //   querystring.stringify({
+          //     access_token: accessToken,
+          //     refresh_token: refreshToken
+          //   }));
+          res.redirect('/spotifyTest');
         } else {
           res.redirect('/#' +
             querystring.stringify({
@@ -91,6 +92,7 @@ SpotifyApi.prototype = {
     }
   },
 
+  // Creats a playlist with the provided name
   createPlaylist: function(userID, playlistName, callback) {
     var bodyParams = {
       'name': playlistName,
@@ -104,6 +106,29 @@ SpotifyApi.prototype = {
         "Authorization" : "Bearer " + accessToken
       },
       body: JSON.stringify(bodyParams)
+    };
+
+    request.post(options, function(error, response, body) {
+      if (error) {
+        console.log(error);
+        callback(error);
+      } else {
+        callback(null, response, body);
+      }
+    });
+  },
+
+  // Adds a track to the playlist.
+  // trackURI must be in the following form: 'spotify:track:<uri>'
+  addTrack: function(userID, playlistID, trackURI, callback) {
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
+           + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      },
+      body: JSON.stringify([trackURI])
     };
 
     request.post(options, function(error, response, body) {

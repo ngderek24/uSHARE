@@ -22,4 +22,12 @@ router.get('/create', function(req, res, next) {
   res.render('spotifyTest', { title: 'Created a playlist!' });
 });
 
+router.get('/add', function(req, res, next) {
+  spotifyApi.addTrack("122520427", "2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
+    console.log("track added!");
+    console.log(body);
+  });
+  res.render('spotifyTest', { title: 'Added a track!' });
+});
+
 module.exports = router;
