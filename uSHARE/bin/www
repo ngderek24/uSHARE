@@ -34,6 +34,11 @@ server.on('listening', onListening);
  */
 
 var io = app.io;
+// io.use(function(socket, next){
+//   var query = socket.request._query;  
+//   socketMgr.add(query.uid, query.rid);
+//   next();
+// });
 io.listen(server);
 
 /**
