@@ -36,4 +36,15 @@ router.get('/add', function(req, res, next) {
   });
 });
 
+router.get('/search', function(req, res, next) {
+  spotifyApi.searchTrack("blah", function(error, response, body) {
+    console.log(body);
+    if (error) {
+      res.render('spotifyTest', { title: 'Error searching!' });
+    } else {
+      res.render('spotifyTest', { title: 'Searched!' });
+    }
+  });
+});
+
 module.exports = router;

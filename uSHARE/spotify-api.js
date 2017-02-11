@@ -148,6 +148,50 @@ SpotifyApi.prototype = {
         }
       }
     });
+  },
+
+  // Search for upto 10 tracks that matches search string
+  searchTrack: function(searchString, callback) {
+    var queryString = querystring.stringify({
+        q: encodeURIComponent(searchString),
+        type: "track",
+        limit: 10
+      });
+
+    var options = {
+      url: "https://api.spotify.com/v1/search?" + queryString,
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if(!error && response.statusCode == 200){
+        var rawTracks = bodyObj['tracks']['items'];
+        var tracks = new Array();
+
+        for(var i = 0; i < rawTracks.length; i++) {
+          tracks.push({
+            'id': rawTracks[i]['id'],
+            'uri': rawTracks[i]['uri'],
+            'name': rawTracks[i]['name'],
+            'artist': rawTracks[i]['artists'][0]['name']
+          });
+        }
+
+        var results = {
+          'tracks': tracks
+        };
+
+        callback(null, response, results);
+      } else {
+        console.log(bodyObj.error);
+        callback(bodyObj.error);
+      }
+    });
   }
 };
 
