@@ -10,6 +10,7 @@ var scopes = 'playlist-modify-public';
 var stateKey = 'spotify_auth_state';
 var accessToken = '';
 var refreshToken = '';
+var userID = '';
 
 SpotifyApi.prototype = {
   
@@ -70,10 +71,10 @@ SpotifyApi.prototype = {
             json: true
           };
 
-          // Use the access token to access the Spotify Web API
-          // request.get(options, function(error, response, body) {
-          //   console.log(body);
-          // });
+          // Use access token to get user id
+          request.get(options, function(error, response, body) {
+            userID = body.id;
+          });
 
           // We can also pass the token to the browser to make requests from there
           // res.redirect('/#' +
@@ -93,7 +94,8 @@ SpotifyApi.prototype = {
   },
 
   // Creats a playlist with the provided name
-  createPlaylist: function(userID, playlistName, callback) {
+  createPlaylist: function(playlistName, callback) {
+    console.log("userID: " + userID);
     var bodyParams = {
       'name': playlistName,
       'public': true
@@ -111,16 +113,20 @@ SpotifyApi.prototype = {
     request.post(options, function(error, response, body) {
       if (error) {
         console.log(error);
-        callback(error);
+        if (callback) {
+          callback(error);
+        }
       } else {
-        callback(null, response, body);
+        if (callback) {
+          callback(null, response, body);
+        }
       }
     });
   },
 
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
-  addTrack: function(userID, playlistID, trackURI, callback) {
+  addTrack: function(playlistID, trackURI, callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",

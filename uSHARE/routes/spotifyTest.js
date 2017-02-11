@@ -15,7 +15,7 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/callback', spotifyApi.requestAccessToken);
 
 router.get('/create', function(req, res, next) {
-  spotifyApi.createPlaylist("122520427", "Does this work", function(error, response, body) {
+  spotifyApi.createPlaylist("Does this work", function(error, response, body) {
     console.log("created!");
     console.log(body);
   });
@@ -23,7 +23,7 @@ router.get('/create', function(req, res, next) {
 });
 
 router.get('/add', function(req, res, next) {
-  spotifyApi.addTrack("122520427", "2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
+  spotifyApi.addTrack("2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
     console.log("track added!");
     console.log(body);
   });
