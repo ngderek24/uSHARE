@@ -16,18 +16,24 @@ router.get('/callback', spotifyApi.requestAccessToken);
 
 router.get('/create', function(req, res, next) {
   spotifyApi.createPlaylist("Does this work", function(error, response, body) {
-    console.log("created!");
     console.log(body);
+    if (error) {
+      res.render('spotifyTest', { title: 'Error creating a playlist!' });
+    } else {
+      res.render('spotifyTest', { title: 'Created a playlist!' });
+    }
   });
-  res.render('spotifyTest', { title: 'Created a playlist!' });
 });
 
 router.get('/add', function(req, res, next) {
   spotifyApi.addTrack("2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
-    console.log("track added!");
     console.log(body);
+    if (error) {
+      res.render('spotifyTest', { title: 'Error adding a track!' });
+    } else {
+      res.render('spotifyTest', { title: 'Added a track!' });
+    }
   });
-  res.render('spotifyTest', { title: 'Added a track!' });
 });
 
 module.exports = router;
