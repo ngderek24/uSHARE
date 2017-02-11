@@ -82,7 +82,7 @@ SpotifyApi.prototype = {
           //     access_token: accessToken,
           //     refresh_token: refreshToken
           //   }));
-          res.redirect('/spotifyTest');
+          res.redirect('/promptRoomOption');
         } else {
           res.redirect('/#' +
             querystring.stringify({
