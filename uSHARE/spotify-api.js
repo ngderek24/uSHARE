@@ -163,6 +163,33 @@ SpotifyApi.prototype = {
     });
   },
 
+  // Get tracks from a playlist
+  getPlaylist: function(playlistID, callback) {
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) +
+           "/playlists/" + encodeURIComponent(playlistID) +
+           "?fields=href,name,owner(!href,external_urls),tracks.items(added_by.id,track(name,album(name)))",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
+      } else {
+        if (callback) {
+          callback(null, response, body);
+        }
+      }
+    });
+  },
+
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
   addTrack: function(playlistID, trackURI, callback) {

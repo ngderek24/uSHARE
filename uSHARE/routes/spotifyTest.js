@@ -62,4 +62,16 @@ router.get('/playlists', function(req, res, next) {
   });
 });
 
+router.get('/playlist', function(req, res, next) {
+  spotifyApi.getPlaylist('5wajVUSkYKyZSYhphpkNh3', function(error, response, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error getting playlist!' });
+    } else {
+      res.render('spotifyTest', { title: 'Got playlist!' });
+    }
+  });
+});
+
 module.exports = router;
