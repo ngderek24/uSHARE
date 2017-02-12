@@ -6,10 +6,11 @@ function SpotifyApi() {}
 var clientID = '211aae652e324de8b0237d55d0fa3030';
 var clientSecret = '691fdcd98e054278aac41672f119f9dd';
 var redirectURI = 'http://localhost:3000/spotifyTest/callback';
-var scopes = 'playlist-modify-public';
+var scopes = 'playlist-modify-public playlist-read-private playlist-read-collaborative';
 var stateKey = 'spotify_auth_state';
 var accessToken = '';
 var refreshToken = '';
+var userID = '';
 
 SpotifyApi.prototype = {
   
@@ -70,10 +71,10 @@ SpotifyApi.prototype = {
             json: true
           };
 
-          // Use the access token to access the Spotify Web API
-          // request.get(options, function(error, response, body) {
-          //   console.log(body);
-          // });
+          // Use access token to get user id
+          request.get(options, function(error, response, body) {
+            userID = body.id;
+          });
 
           // We can also pass the token to the browser to make requests from there
           // res.redirect('/#' +
@@ -92,8 +93,8 @@ SpotifyApi.prototype = {
     }
   },
 
-  // Creats a playlist with the provided name
-  createPlaylist: function(userID, playlistName, callback) {
+  // Creats a new playlist with the provided name
+  createPlaylist: function(playlistName, callback) {
     var bodyParams = {
       'name': playlistName,
       'public': true
@@ -109,18 +110,89 @@ SpotifyApi.prototype = {
     };
 
     request.post(options, function(error, response, body) {
-      if (error) {
-        console.log(error);
-        callback(error);
+      bodyObj = JSON.parse(body);
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
       } else {
-        callback(null, response, body);
+        if (callback) {
+          callback(null, response, body);
+        }
+      }
+    });
+  },
+
+  // Get a list of user's playlists
+  getPlaylists: function(callback) {
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
+      } else {
+        var rawPlaylists = bodyObj.items;
+        var playlists = new Array();
+
+        for(var i = 0; i < rawPlaylists.length; i++) {
+          playlists.push({
+            'id': rawPlaylists[i]['id'],
+            'uri': rawPlaylists[i]['uri'],
+            'name': rawPlaylists[i]['name']
+          });
+        }
+
+        var results = {
+          'playlists': playlists
+        };
+
+        if (callback) {
+          callback(null, response, results);
+        }
+      }
+    });
+  },
+
+  // Get tracks from a playlist
+  getPlaylist: function(playlistID, callback) {
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) +
+           "/playlists/" + encodeURIComponent(playlistID) +
+           "?fields=href,name,owner(!href,external_urls),tracks.items(added_by.id,track(name,album(name)))",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
+      } else {
+        if (callback) {
+          callback(null, response, body);
+        }
       }
     });
   },
 
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
-  addTrack: function(userID, playlistID, trackURI, callback) {
+  addTrack: function(playlistID, trackURI, callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
@@ -132,11 +204,59 @@ SpotifyApi.prototype = {
     };
 
     request.post(options, function(error, response, body) {
-      if (error) {
-        console.log(error);
-        callback(error);
+      bodyObj = JSON.parse(body);
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
       } else {
-        callback(null, response, body);
+        if (callback) {
+          callback(null, response, body);
+        }
+      }
+    });
+  },
+
+  // Search for upto 10 tracks that matches search string
+  searchTrack: function(searchString, callback) {
+    var queryString = querystring.stringify({
+        q: encodeURIComponent(searchString),
+        type: "track",
+        limit: 10
+      });
+
+    var options = {
+      url: "https://api.spotify.com/v1/search?" + queryString,
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if(!error && response.statusCode == 200){
+        var rawTracks = bodyObj['tracks']['items'];
+        var tracks = new Array();
+
+        for(var i = 0; i < rawTracks.length; i++) {
+          tracks.push({
+            'id': rawTracks[i]['id'],
+            'uri': rawTracks[i]['uri'],
+            'name': rawTracks[i]['name'],
+            'artist': rawTracks[i]['artists'][0]['name']
+          });
+        }
+
+        var results = {
+          'tracks': tracks
+        };
+
+        callback(null, response, results);
+      } else {
+        console.log(bodyObj.error);
+        callback(bodyObj.error);
       }
     });
   }

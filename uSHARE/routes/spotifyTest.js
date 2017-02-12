@@ -15,19 +15,63 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/callback', spotifyApi.requestAccessToken);
 
 router.get('/create', function(req, res, next) {
-  spotifyApi.createPlaylist("122520427", "Does this work", function(error, response, body) {
-    console.log("created!");
+  spotifyApi.createPlaylist("Does this work", function(error, response, body) {
     console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error creating a playlist!' });
+    } else {
+      res.render('spotifyTest', { title: 'Created a playlist!' });
+    }
   });
-  res.render('spotifyTest', { title: 'Created a playlist!' });
 });
 
 router.get('/add', function(req, res, next) {
-  spotifyApi.addTrack("122520427", "2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
-    console.log("track added!");
+  spotifyApi.addTrack("2pzrhY3Hb4Jn3Xj7RDEHlp", "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
     console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error adding a track!' });
+    } else {
+      res.render('spotifyTest', { title: 'Added a track!' });
+    }
   });
-  res.render('spotifyTest', { title: 'Added a track!' });
+});
+
+router.get('/search', function(req, res, next) {
+  spotifyApi.searchTrack("blah", function(error, response, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error searching!' });
+    } else {
+      res.render('spotifyTest', { title: 'Searched!' });
+    }
+  });
+});
+
+router.get('/playlists', function(req, res, next) {
+  spotifyApi.getPlaylists(function(error, response, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error getting playlists!' });
+    } else {
+      res.render('spotifyTest', { title: 'Got playlists!' });
+    }
+  });
+});
+
+router.get('/playlist', function(req, res, next) {
+  spotifyApi.getPlaylist('5wajVUSkYKyZSYhphpkNh3', function(error, response, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error getting playlist!' });
+    } else {
+      res.render('spotifyTest', { title: 'Got playlist!' });
+    }
+  });
 });
 
 module.exports = router;
