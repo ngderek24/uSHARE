@@ -93,7 +93,7 @@ SpotifyApi.prototype = {
     }
   },
 
-  // Creats a playlist with the provided name
+  // Creats a new playlist with the provided name
   createPlaylist: function(playlistName, callback) {
     var bodyParams = {
       'name': playlistName,
@@ -118,6 +118,46 @@ SpotifyApi.prototype = {
       } else {
         if (callback) {
           callback(null, response, body);
+        }
+      }
+    });
+  },
+
+  // Get a list of user's playlists
+  getPlaylists: function(callback) {
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      }
+    };
+
+    request.get(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
+      } else {
+        var rawPlaylists = bodyObj.items;
+        var playlists = new Array();
+
+        for(var i = 0; i < rawPlaylists.length; i++) {
+          playlists.push({
+            'id': rawPlaylists[i]['id'],
+            'uri': rawPlaylists[i]['uri'],
+            'name': rawPlaylists[i]['name']
+          });
+        }
+
+        var results = {
+          'playlists': playlists
+        };
+
+        if (callback) {
+          callback(null, response, results);
         }
       }
     });
