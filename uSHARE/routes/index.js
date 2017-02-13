@@ -5,7 +5,7 @@ var router = express.Router();
 var spotifyApi = new SpotifyApi();
 spotifyApi.setup();
 
-var roomAccessCodes = new Array();
+var roomAccessCodes = new Object();
 
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
@@ -52,39 +52,43 @@ router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
   res.render('promptCreateOrJoin', { title: 'uSHARE' });
-  spotifyApi.getPlaylists(function(error, response, body) {
+  /*spotifyApi.getPlaylists(function(error, response, body) {
     console.log(body);
-  });
+  });*/
 });
 
 router.post('/newPlaylist', function(req, res, next) {
   spotifyApi.createPlaylist(req.body.playlistName, function(error, response, body) {
-    // TODO: check error flag for API calls
-    var access_code = generateRandomString(5);
-    while (roomAccessCodes.indexOf(access_code) != -1)
-      access_code = generateRandomString(5);
+    if (error)
+      console.log('create playlist error');
+    else {
+      var playlistBodyObject = JSON.parse(body);
+      var access_code = generateRandomString(5);
+      while (access_code in roomAccessCodes)
+        access_code = generateRandomString(5);
 
-    roomAccessCodes.push(access_code);
-    console.log('playlist created');
-    res.redirect('/' + access_code);
+      roomAccessCodes[access_code] = playlistBodyObject.id;
+      console.log('playlist created');
+      res.redirect('/' + access_code);
+    }
   });
 });
 
 router.post('/joinRoom', function(req, res, next) {
-  if (roomAccessCodes.indexOf(req.body.roomAccessCode) == -1)
+  if (!(req.body.roomAccessCode in roomAccessCodes))
     console.log('Not a valid access code');
   else
     res.redirect('/' + req.body.roomAccessCode);
 });
 
 router.get('/:access_code', function(req, res, next) {
-  if (roomAccessCodes.indexOf(req.params.access_code) != -1) {
+  if (req.params.access_code in roomAccessCodes) {
     res.render('room', { title: 'uSHARE',
       tracks: JSON.stringify(dummy_tracks),
       metadata: JSON.stringify(dummy_metadata),             
     });  
   } else 
-    console.log('Invalid Room');
+    console.log('Invalid Room Code');
 });
 
 function generateRandomString(length) {
