@@ -5,6 +5,6 @@ angular.module("ushare").directive("buttonBar", function(){
 		scope: {
 			links: "="
 		},
-		templateUrl: 'partials/buttonBar'
+		templateUrl: '/partials/buttonBar'
 	}
 });

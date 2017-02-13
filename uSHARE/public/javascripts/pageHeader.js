@@ -4,6 +4,6 @@ angular.module("ushare", []).directive("pageHeader", function(){
 		scope: {
 			title: "@"
 		},
-		templateUrl: 'partials/pageHeader'
+		templateUrl: '/partials/pageHeader'
 	}
 });

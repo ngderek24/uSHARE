@@ -14,7 +14,7 @@ var links = [
   				  endpoint: "/login" }
   			]
 
-var dummy_tracks = [
+var dummyTracks = [
 											{ id: 123,
 												name: "Silver Lining",
 												artist: "Oddisee"
@@ -25,7 +25,7 @@ var dummy_tracks = [
 											}
 									]
 
-var dummy_metadata = {
+var dummyMetadata = {
   							role: "guest",
   							uid: 123243434,
   							rid: 1243254305943,
@@ -35,8 +35,8 @@ router.get('/room', function(req, res, next) {
   res.render('room', { title: 'uSHARE',
   						links: links,
   						// tracks: JSON.stringify([]),
-  						tracks: JSON.stringify(dummy_tracks),
-  						metadata: JSON.stringify(dummy_metadata), 						
+  						tracks: JSON.stringify(dummyTracks),
+  						metadata: JSON.stringify(dummyMetadata), 						
   					});
 });
 
@@ -63,13 +63,16 @@ router.post('/newPlaylist', function(req, res, next) {
       console.log('create playlist error');
     else {
       var playlistBodyObject = JSON.parse(body);
-      var access_code = generateRandomString(5);
-      while (access_code in roomAccessCodes)
-        access_code = generateRandomString(5);
+      var accessCode = generateRandomString(5);
+      while (accessCode in roomAccessCodes)
+        accessCode = generateRandomString(5);
 
-      roomAccessCodes[access_code] = playlistBodyObject.id;
+      //yea...we really shouldn't make the room url dependent on the playlist id...
+      roomAccessCodes[accessCode] = playlistBodyObject.id;
+      req.session.accessCode = accessCode;
+
       console.log('playlist created');
-      res.redirect('/' + access_code);
+      res.redirect('/room/' + playlistBodyObject.id);
     }
   });
 });
@@ -81,12 +84,25 @@ router.post('/joinRoom', function(req, res, next) {
     res.redirect('/' + req.body.roomAccessCode);
 });
 
-router.get('/:access_code', function(req, res, next) {
-  if (req.params.access_code in roomAccessCodes) {
-    res.render('room', { title: 'uSHARE',
-      tracks: JSON.stringify(dummy_tracks),
-      metadata: JSON.stringify(dummy_metadata),             
-    });  
+/*
+  Keep the data passed to this route to a minimum since we need to handle both rooms
+  created from new playlists and existing playlists
+*/
+router.get('/room/:playlistId', function(req, res, next) {
+  console.log(req.params.playlistId);
+  var playlistId = req.params.playlistId;
+
+  if (req.session.accessCode in roomAccessCodes || req.session.playlistId) {
+    req.session.accessCode = true;
+    req.session.accessCode = null;
+
+    //TODO: generate room metadata dynamically
+    dummyMetadata["playlistId"] = playlistId;
+
+    res.render('room', { 
+                          title: "DON'T LET YOUR MEMES BE DREAMS",
+                          metadata: JSON.stringify(dummyMetadata)           
+                       });  
   } else 
     console.log('Invalid Room Code');
 });

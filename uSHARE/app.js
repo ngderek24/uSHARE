@@ -4,17 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var socket_io = require("socket.io");
+var session = require('express-session');
 
 var index = require('./routes/index');
 var spotifyTest = require('./routes/spotifyTest');
 
 //Create Express app object
 var app = express();
-
-//Create socket
-var io = socket_io();
-app.io = io;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +23,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+                  secret: '1r8weytewkgjbdfs34t4',
+                  resave: false,
+                  saveUninitialized: true
+                }));
 
 
 // handles client angular requests for view partials
@@ -56,56 +57,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-//Socket testing 
-//TODO: move to separate js file
-// io.on("connection", function(socket){
-// 	console.log("New user connection.");
-
-// 	socket.emit('playlist_changed', { track: { id: 123,
-//                                              name: "Silver Lining",
-//                                              artist: "Oddisee"
-//                                            },
-//                                     status: "add"
-//                                   });
-// 	socket.on('message_to_server', function(data){
-// 		console.log('Message from client: ' + data.msg)
-// 	});
-// });
-io.on("connection", function(socket){
-  var room = socket.handshake.query['rid'];
-  socket.join(room);
-  
-  socket.on('add_track', function(data){
-    socket.to(room).emit('playlist_changed', { track: { id: 123,
-                                                        name: "Silver Lining",
-                                                        artist: "Oddisee"                                                      
-                                                      },
-                                               status: "add"
-                                             });
-    socket.emit('playlist_changed', { track: { id: 123,
-                                         name: "Silver Lining",
-                                         artist: "Oddisee"
-                                        },
-                                      status: "add"
-                                    });
-  });
-
-  socket.on('remove_track', function(data){
-    socket.to(room).emit('playlist_changed', { track: { id: data.id
-                                                      },
-                                               status: "remove"
-                                             });
-    socket.emit('playlist_changed', { track: { id: data.id
-                                           },
-                                      status: "remove"
-                                    });
-  });
-
-  socket.on('disconnect', function(){    
-    socket.leave(room);
-  })
-});
-
 
 module.exports = app;

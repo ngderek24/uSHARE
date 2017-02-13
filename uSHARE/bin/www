@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('ushare:server');
 var http = require('http');
+var socketManager = require('../socketManager.js');
 
 /**
  * Get port from environment and store in Express.
@@ -33,7 +34,7 @@ server.on('listening', onListening);
  * Hook up socket.io
  */
 
-var io = app.io;
+var io = socketManager.io;
 // io.use(function(socket, next){
 //   var query = socket.request._query;  
 //   socketMgr.add(query.uid, query.rid);

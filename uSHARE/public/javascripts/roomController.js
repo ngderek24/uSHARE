@@ -12,12 +12,21 @@ angular.module("ushare").controller("roomController", function($scope, $http, $w
     $scope.role = metadata.role;
     $scope.uid = metadata.uid;
     $scope.rid = metadata.rid;
+    $scope.playlist_id = metadata.playlist_id;
 
-    $scope.socket = io('http://localhost:3000', { query: "uid=" + $scope.uid +
-                                                         "&rid=" + $scope.rid });
+    $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id });
 
     $scope.socket.on('room_closed', function (data) {
     
+    });
+
+    $scope.socket.on('test', function(data){
+      console.log(data.body);
+    })
+
+    $scope.socket.on('playlist_loaded', function (data) {
+      $scope.tracks = data.tracks;
+      $scope.$apply();
     });
 
     //When another user did somthing to the playlist
