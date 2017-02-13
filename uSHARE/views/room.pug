@@ -5,7 +5,7 @@ block content
     script
     page-header(title=title)
     div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + metadata + ')')
-      form(class="container-centered-horizontal text-centered" action="/")
+      form(class="container-centered-horizontal text-centered" action="/promptRoomOption")
         input(class="button-default" type="submit" ng-if="role=='host'" value="Close room")
         input(class="button-default" type="submit" ng-if="role=='guest'" value="Leave room")
       div(class="container-centered-horizontal table-container")
