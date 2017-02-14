@@ -6,7 +6,7 @@ function SpotifyApi() {}
 var clientID = '211aae652e324de8b0237d55d0fa3030';
 var clientSecret = '691fdcd98e054278aac41672f119f9dd';
 var redirectURI = 'http://localhost:3000/spotifyTest/callback';
-var scopes = 'playlist-modify-public playlist-read-private playlist-read-collaborative';
+var scopes = 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative';
 var stateKey = 'spotify_auth_state';
 var accessToken = '';
 var refreshToken = '';
@@ -204,6 +204,39 @@ SpotifyApi.prototype = {
     };
 
     request.post(options, function(error, response, body) {
+      bodyObj = JSON.parse(body);
+      if (bodyObj.error) {
+        if (callback) {
+          callback(bodyObj.error);
+        }
+      } else {
+        if (callback) {
+          callback(null, response, body);
+        }
+      }
+    });
+  },
+
+  // Remove track with the given URI from the playlist
+  // If there are multiple instances of the same track, all are removed.
+  removeTrack: function(playlistID, trackURI, callback) {
+    var bodyParams = {
+      "tracks": [ {
+        "uri": trackURI
+      } ]
+    };
+
+    var options = {
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
+           + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "Bearer " + accessToken
+      },
+      body: JSON.stringify(bodyParams)
+    };
+
+    request.delete(options, function(error, response, body) {
       bodyObj = JSON.parse(body);
       if (bodyObj.error) {
         if (callback) {
