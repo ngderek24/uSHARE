@@ -292,6 +292,12 @@ SpotifyApi.prototype = {
         callback(bodyObj.error);
       }
     });
+  },
+
+  // Get user id.
+  // Instantaneous, does not require a callback.
+  getUserID: function() {
+    return userID;
   }
 };
 
