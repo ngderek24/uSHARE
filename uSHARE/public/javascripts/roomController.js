@@ -8,12 +8,13 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
   });
 
   $scope.initRoom = function(metadata){
-    scopeSharer.setScope($scope);
+    scopeSharer.setParentScope($scope);
     /*
       Should actually call internal API to fetch playlist tracks here for better accuracy rather than
       having router pass through playlist data
     */
     $scope.role = metadata.role;
+    // $scope.role="guest";
     $scope.uid = metadata.uid;
     $scope.rid = metadata.rid;
     $scope.playlist_id = metadata.playlist_id;
@@ -54,6 +55,10 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
         }
       }      
     });
+
+    $scope.socket.on('kicked', function(data){
+      scopeSharer.getChildScope().kicked();
+    })
   }
 
   $scope.remove = function(id){
@@ -65,6 +70,10 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
   }
 
   $scope.postModal = function(){
+    //maybe handle failure to close room later on
+    if($scope.role == "host"){
+      $scope.socket.emit('close_room', { });
+    }
     window.location.href = "/promptRoomOption";
   }
 }]);

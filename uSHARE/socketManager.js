@@ -54,6 +54,10 @@ io.on("connection", function(socket){
                                     });
   });
 
+  socket.on('close_room', function(data){
+    socket.to(pid).emit('kicked', {});
+  });
+
   socket.on('disconnect', function(){    
     socket.leave(pid);
   })

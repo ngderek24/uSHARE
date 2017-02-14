@@ -1,7 +1,7 @@
 div(class="modal-header")
-  h3(class="modal-title" id="modal-title") {{ metadata.btnLabel }}
+  h3(class="modal-title" id="modal-title") {{ metadata.modalTitle }}
 div(class="modal-body")
   div(ng-if='metadata.modalBody!=""') {{ metadata.modalBody }}
 div(class="modal-footer")
   button(class="btn btn-primary" type="button" ng-click="ok()") Ok
-  button(class="btn btn-default" type="button" ng-click="cancel()") Cancel
+  button(class="btn btn-default" type="button" ng-if="!metadata.hideCancel" ng-click="cancel()") Cancel

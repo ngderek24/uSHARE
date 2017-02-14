@@ -1,13 +1,20 @@
 var app = angular.module('ushare');
 app.service('scopeSharer', function(){
-	var scope = null;
+	var parentScope = null;
+	var childScope = null;
 
 	return{
-		getScope: function(){
-			return scope;
+		getChildScope: function(){
+			return childScope;
 		},
-		setScope: function(value){
-			scope = value;
-		}
+		setChildScope: function(value){
+			childScope = value;
+		},
+		getParentScope: function(){
+			return parentScope;
+		},
+		setParentScope: function(value){
+			parentScope = value;
+		},
 	};
 });
