@@ -168,7 +168,7 @@ SpotifyApi.prototype = {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) +
            "/playlists/" + encodeURIComponent(playlistID) +
-           "?fields=href,name,owner(!href,external_urls),tracks.items(added_by.id,track(name,album(name)))",
+           "?fields=href,name,owner(!href,external_urls),tracks.items(added_by.id,track(id,name,artists(name),album(name)))",
       headers: {
         "Content-Type" : "application/json",
         "Authorization" : "Bearer " + accessToken
