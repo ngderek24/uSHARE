@@ -1,14 +1,18 @@
-angular.module("ushare").controller("roomController", function($scope, $http, $window) {
+angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', function($scope, scopeSharer) {
   $scope.tracks = new Array();
   $scope.role = "";  
   $scope.socket;
 
-  $scope.initRoom = function(tracks, metadata){
+  $scope.$watch('metadata', function () {
+    $scope.initRoom($scope.metadata);
+  });
+
+  $scope.initRoom = function(metadata){
+    scopeSharer.setScope($scope);
     /*
       Should actually call internal API to fetch playlist tracks here for better accuracy rather than
       having router pass through playlist data
     */
-    $scope.tracks = tracks;
     $scope.role = metadata.role;
     $scope.uid = metadata.uid;
     $scope.rid = metadata.rid;
@@ -59,4 +63,8 @@ angular.module("ushare").controller("roomController", function($scope, $http, $w
   $scope.add = function(id){
     $scope.socket.emit('add_track', { id: id });
   }
-});
+
+  $scope.postModal = function(){
+    window.location.href = "/promptRoomOption";
+  }
+}]);

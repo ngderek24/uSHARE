@@ -26,7 +26,7 @@ var dummyTracks = [
 									]
 
 var dummyMetadata = {
-  							role: "guest",
+  							role: "host",
   							uid: 123243434,
   							rid: 1243254305943,
   						}
@@ -100,6 +100,10 @@ router.get('/room/:roomId', function(req, res, next) {
                        });  
   } else 
     console.log('Invalid Room Code');
+});
+
+router.get('/closeRoom', function(req, res, next){
+
 });
 
 function generateRandomString(length) {

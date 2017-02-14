@@ -1,4 +1,7 @@
 div(class="modal-header")
-  h3(class="modal-title" id="modal-title") This room has been closed.
+  h3(class="modal-title" id="modal-title") {{ metadata.btnLabel }}
+div(class="modal-body")
+  div(ng-if='metadata.modalBody!=""') {{ metadata.modalBody }}
 div(class="modal-footer")
-  button(class="btn btn-primary" type="button" ng-click="$ctrl.close()")
+  button(class="btn btn-primary" type="button" ng-click="ok()") Ok
+  button(class="btn btn-default" type="button" ng-click="cancel()") Cancel
