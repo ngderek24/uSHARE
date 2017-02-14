@@ -2,12 +2,14 @@ extends layout
 
 block content
   div(class="container-padded-top")
-    script
     page-header(title=title)
-    div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + metadata + ')')
-      form(class="container-centered-horizontal text-centered" action="/promptRoomOption")
+    div(ng-controller='modalController as $ctrl')
+      script(type="text/ng-template" id="redirectModal.html")
+        
+      form(class="container-centered-horizontal text-centered")
         input(class="button-default" type="submit" ng-if="role=='host'" value="Close room")
-        input(class="button-default" type="submit" ng-if="role=='guest'" value="Leave room")
+        input(class="button-default" type="submit" value="Leave room" ng-click="$ctrl.open()")
+    div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init='initRoom(' + tracks + ',' + metadata + ')')    
       div(class="container-centered-horizontal table-container")
         table(class="table table-striped")
           thead

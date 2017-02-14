@@ -33,6 +33,7 @@ app.use(session({
 // handles client angular requests for view partials
 app.get('/partials/:name', function(req, res){
   var name = req.params.name;
+  console.log(name);
   res.render('partials/' + name);
 });
 

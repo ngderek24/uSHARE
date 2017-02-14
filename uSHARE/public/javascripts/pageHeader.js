@@ -1,4 +1,4 @@
-angular.module("ushare", []).directive("pageHeader", function(){
+angular.module("ushare", ['ui.bootstrap']).directive("pageHeader", function(){
 	return{
 		restrict: 'AE',
 		scope: {

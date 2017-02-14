@@ -31,14 +31,14 @@ var dummyMetadata = {
   							rid: 1243254305943,
   						}
 
-router.get('/room', function(req, res, next) {
-  res.render('room', { title: 'uSHARE',
-  						links: links,
-  						// tracks: JSON.stringify([]),
-  						tracks: JSON.stringify(dummyTracks),
-  						metadata: JSON.stringify(dummyMetadata), 						
-  					});
-});
+// router.get('/room', function(req, res, next) {
+//   res.render('room', { title: 'uSHARE',
+//   						links: links,
+//   						// tracks: JSON.stringify([]),
+//   						tracks: JSON.stringify(dummyTracks),
+//   						metadata: JSON.stringify(dummyMetadata), 						
+//   					});
+// });
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'uSHARE',
@@ -67,12 +67,10 @@ router.post('/newPlaylist', function(req, res, next) {
       while (roomId in roomIds)
         roomId = generateRandomString(10);
 
-      //yea...we really shouldn't make the room url dependent on the playlist id...
       roomIds[roomId] = playlistBodyObject.id;
-      req.session.roomId = roomId;
 
       console.log('playlist created');
-      res.redirect('/room/' + playlistBodyObject.id);
+      res.redirect('/room/' + roomId);
     }
   });
 });
@@ -88,16 +86,13 @@ router.post('/joinRoom', function(req, res, next) {
   Keep the data passed to this route to a minimum since we need to handle both rooms
   created from new playlists and existing playlists
 */
-router.get('/room/:playlistId', function(req, res, next) {
-  console.log(req.params.playlistId);
-  var playlistId = req.params.playlistId;
+router.get('/room/:roomId', function(req, res, next) {
+  var roomId = req.params.roomId;
 
-  if (req.session.roomId in roomIds || req.session.playlistId) {
-    req.session.playlistId = true;
-    req.session.roomId = null;
-
+  //TO DO: handle access code stuff
+  if (roomId in roomIds) {
     //TODO: generate room metadata dynamically
-    dummyMetadata["playlistId"] = playlistId;
+    dummyMetadata["playlistId"] = roomIds[roomId];
 
     res.render('room', { 
                           title: "DON'T LET YOUR MEMES BE DREAMS",
