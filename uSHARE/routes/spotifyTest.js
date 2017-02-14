@@ -74,4 +74,20 @@ router.get('/playlist', function(req, res, next) {
   });
 });
 
+router.get('/remove', function(req, res, next) {
+  spotifyApi.removeTrack('2pzrhY3Hb4Jn3Xj7RDEHlp', "spotify:track:4iV5W9uYEdYUVa79Axb7Rh", function(error, response, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+      res.render('spotifyTest', { title: 'Error removing track!' });
+    } else {
+      res.render('spotifyTest', { title: 'Removed track!' });
+    }
+  });
+});
+
+router.get('/userid', function(req, res, next) {
+  res.render('spotifyTest', { title: spotifyApi.getUserID() });
+});
+
 module.exports = router;
