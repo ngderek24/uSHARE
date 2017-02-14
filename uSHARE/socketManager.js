@@ -17,11 +17,17 @@ io.on("connection", function(socket){
     var playlist = JSON.parse(body);
     var tracks = new Array();
 
-    (playlist.tracks.items).forEach(function(d){      
+    (playlist.tracks.items).forEach(function(d){   
+      var artists = new Array();
+
+      for(var i = 0; i < d.track.artists.length; i++){
+        artists.push(d.track.artists[i].name);
+      }
+
       tracks.push({
-                    id: 0,
+                    id: d.track.id,
                     name: d.track.name,
-                    artist: "TEST"
+                    artist: artists.join(),
                   });
     });
 
