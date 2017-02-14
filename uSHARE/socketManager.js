@@ -1,12 +1,12 @@
 var SpotifyApi = require("./spotify-api.js");
-var socket_io = require("socket.io");
+var socketIo = require("socket.io");
 
 var socketManager = new Object();
 
 var spotifyApi = new SpotifyApi();
 spotifyApi.setup();
 
-var io = socket_io();
+var io = socketIo();
 socketManager.io = io;
 
 io.on("connection", function(socket){

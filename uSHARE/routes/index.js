@@ -5,7 +5,7 @@ var router = express.Router();
 var spotifyApi = new SpotifyApi();
 spotifyApi.setup();
 
-var roomAccessCodes = new Object();
+var roomIds = new Object();
 
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
@@ -63,13 +63,13 @@ router.post('/newPlaylist', function(req, res, next) {
       console.log('create playlist error');
     else {
       var playlistBodyObject = JSON.parse(body);
-      var accessCode = generateRandomString(5);
-      while (accessCode in roomAccessCodes)
-        accessCode = generateRandomString(5);
+      var roomId = generateRandomString(10);
+      while (roomId in roomIds)
+        roomId = generateRandomString(10);
 
       //yea...we really shouldn't make the room url dependent on the playlist id...
-      roomAccessCodes[accessCode] = playlistBodyObject.id;
-      req.session.accessCode = accessCode;
+      roomIds[roomId] = playlistBodyObject.id;
+      req.session.roomId = roomId;
 
       console.log('playlist created');
       res.redirect('/room/' + playlistBodyObject.id);
@@ -78,10 +78,10 @@ router.post('/newPlaylist', function(req, res, next) {
 });
 
 router.post('/joinRoom', function(req, res, next) {
-  if (!(req.body.roomAccessCode in roomAccessCodes))
-    console.log('Not a valid access code');
+  if (!(req.body.roomId in roomIds))
+    console.log('Not a valid room ID');
   else
-    res.redirect('/' + req.body.roomAccessCode);
+    res.redirect('/' + req.body.roomId);
 });
 
 /*
@@ -92,9 +92,9 @@ router.get('/room/:playlistId', function(req, res, next) {
   console.log(req.params.playlistId);
   var playlistId = req.params.playlistId;
 
-  if (req.session.accessCode in roomAccessCodes || req.session.playlistId) {
-    req.session.accessCode = true;
-    req.session.accessCode = null;
+  if (req.session.roomId in roomIds || req.session.playlistId) {
+    req.session.playlistId = true;
+    req.session.roomId = null;
 
     //TODO: generate room metadata dynamically
     dummyMetadata["playlistId"] = playlistId;
