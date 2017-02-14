@@ -1,7 +1,7 @@
 var app = angular.module('ushare');
 
-app.controller('modalInstanceCtrl', ['$scope', "$uibModalInstance", 'metadata', function ($scope, $uibModalInstance, metadata) {
-  $scope.metadata = metadata;
+app.controller('modalInstanceCtrl', ['$scope', "$uibModalInstance", 'modalData', function ($scope, $uibModalInstance, modalData) {
+  $scope.modalData = modalData;
 
   $scope.ok = function () {
     $uibModalInstance.close();
@@ -15,27 +15,39 @@ app.controller('modalInstanceCtrl', ['$scope', "$uibModalInstance", 'metadata', 
 app.controller('modalController', ['$uibModal', 'scopeSharer', function ($uibModal, scopeSharer) {
   var ctrl = this;
 
+  var closeModal = {
+    host: true,
+    btnLabel: "Close Room",
+    modalTitle: "Close Room?",
+    modalBody: "Clicking ok will kick everyone else out as well!",
+    hideCancel: false,
+  };
+
+  var leaveModal = {
+    host: false,
+    btnLabel: "Leave Room",
+    modalTitle: "Leave Room?",
+    modalBody: "",
+    hideCancel: false,
+  };
+
+  var kickedModal = {
+    host: true,
+    btnLabel: "Leave Room",
+    modalTitle: "Room Closed",
+    modalBody: "The host closed this room.",
+    hideCancel: true,
+  };
+
   ctrl.animationsEnabled = true;
 
   ctrl.initModal = function(metadata){
     scopeSharer.setChildScope(this);
 
     if(metadata.role == "host"){
-      ctrl.metadata = {
-        host: true,
-        btnLabel: "Close Room",
-        modalTitle: "Close Room?",
-        modalBody: "Clicking ok will kick everyone else out as well!",
-        hideCancel: false,
-      }
+      ctrl.modalData = closeModal;
     }else{
-      ctrl.metadata = {
-        host: false,
-        btnLabel: "Leave Room",
-        modalTitle: "Leave Room?",
-        modalBody: "",
-        hideCancel: false,
-      }
+      ctrl.modalData = leaveModal;
     }
   }
 
@@ -46,8 +58,8 @@ app.controller('modalController', ['$uibModal', 'scopeSharer', function ($uibMod
       controller: 'modalInstanceCtrl',
       size: size,
       resolve: {
-        metadata: function () {
-          return ctrl.metadata;
+        modalData: function () {
+          return ctrl.modalData;
         }
       }
     });
@@ -63,13 +75,7 @@ app.controller('modalController', ['$uibModal', 'scopeSharer', function ($uibMod
   };
 
   ctrl.kicked = function(size){
-    ctrl.metadata = {
-      host: true,
-      btnLabel: "Leave Room",
-      modalTitle: "Room Closed",
-      modalBody: "The host closed this room.",
-      hideCancel: true,
-    };
+    ctrl.modalData = kickedModal;
 
     var modalInstance = $uibModal.open({
       animation: ctrl.animationsEnabled,
@@ -77,8 +83,8 @@ app.controller('modalController', ['$uibModal', 'scopeSharer', function ($uibMod
       controller: 'modalInstanceCtrl',
       size: size,
       resolve: {
-        metadata: function () {
-          return ctrl.metadata;
+        modalData: function () {
+          return ctrl.modalData;
         }
       }
     });

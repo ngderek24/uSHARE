@@ -21,10 +21,6 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
 
     $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id });
 
-    $scope.socket.on('room_closed', function (data) {
-    
-    });
-
     $scope.socket.on('test', function(data){
       console.log(data.body);
     })
@@ -73,7 +69,10 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     //maybe handle failure to close room later on
     if($scope.role == "host"){
       $scope.socket.emit('close_room', { });
+      window.location.href = "/closeRoom/" + $scope.rid;
     }
-    window.location.href = "/promptRoomOption";
+    else{
+      window.location.href = "/promptRoomOption";
+    }
   }
 }]);

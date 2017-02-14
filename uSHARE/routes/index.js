@@ -93,6 +93,7 @@ router.get('/room/:roomId', function(req, res, next) {
   if (roomId in roomIds) {
     //TODO: generate room metadata dynamically
     dummyMetadata["playlistId"] = roomIds[roomId];
+    dummyMetadata['rid'] = roomId;
 
     res.render('room', { 
                           title: "DON'T LET YOUR MEMES BE DREAMS",
@@ -100,10 +101,20 @@ router.get('/room/:roomId', function(req, res, next) {
                        });  
   } else 
     console.log('Invalid Room Code');
+    res.redirect('/promptRoomOption');
 });
 
-router.get('/closeRoom', function(req, res, next){
+router.get('/closeRoom/:rid', function(req, res, next){
+  var rid = req.params.rid;
 
+  for(roomId in roomIds){
+    if(roomId == rid){
+      delete roomIds[roomId];
+      break;
+    }
+  }
+  
+  res.redirect('/promptRoomOption');
 });
 
 function generateRandomString(length) {

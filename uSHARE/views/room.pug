@@ -6,7 +6,7 @@ block content
     div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init="metadata=" + metadata)    
       div(ng-controller='modalController as m' ng-init="m.initModal(" + metadata +  ")")    
         form(class="container-centered-horizontal text-centered")
-          input(class="button-default" type="submit" ng-value="m.metadata.btnLabel" ng-click="m.open()")
+          input(class="button-default" type="submit" ng-value="m.modalData.btnLabel" ng-click="m.open()")
       div(class="container-centered-horizontal table-container")
         table(class="table table-striped")
           thead
