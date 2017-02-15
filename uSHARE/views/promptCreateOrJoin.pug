@@ -1,10 +1,46 @@
 extends layout
 
 block content
-	page-header(title=title)
-	form(class="container-centered-horizontal text-centered" method="post" action="/newPlaylist")
-		input(type="text" name="playlistName")
-		input(class="button-default" type="submit" value="Create Room")
-	form(class="container-centered-horizontal text-centered" method="post" action="/joinRoom")
-		input(type="text" name="roomId")
-		input(class="button-default" type="submit" value="Join Room")
+  page-header(title=title)
+  div(class="container-centered-horizontal container-padded" ng-controller='roomOptionController' ng-init='initPlaylistsModal(' + playlists + ')')
+    div(class="modal fade" id="createRoomModal" role="dialog")
+      div(class="modal-dialog")
+        div(class="modal-content")
+          div(class="modal-header")
+            button(type="button" class="close" data-dismiss="modal") &times
+            h4(class="modal-title") Select A Playlist
+          div(class="modal-body")
+            div(class="container-centered-horizontal table-container")
+              table(class="table table-striped")
+                thead
+                  tr
+                    th Room Name
+                    th Playlist Name
+                    th Private
+                    th Access Code
+                    th Create
+                tbody
+                  tr(ng-repeat="playlist in playlists" id="{{playlist.id}}")
+                    td 
+                      input(type="text" ng-model="playlist.roomName")
+                    td {{::playlist.name}}
+                    td
+                      input(type="checkbox" ng-checked="playlist.isPrivate")
+                    td
+                      input(type="text" ng-model="playlist.accessCode")
+                    td 
+                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.roomName, playlist.id, playlist.isPrivate, playlist.accessCode)") Choose
+          div(class="modal-footer")
+            button(type="button" class="btn btn-default" data-dismiss="modal") Close
+
+    button(class="button-default" type="button" data-toggle="modal" data-target="#createRoomModal") Create Room From An Existing Playlist
+    form(class="container-centered-horizontal text-centered" method="post" action="/newPlaylist")
+      input(type="text" name="roomName")
+      input(type="text" name="playlistName")
+      input(type="checkbox" name="isPrivate")
+      input(type="text" name="accessCode")
+      input(class="button-default" type="submit" value="Create Room With An Empty Playlist")
+    form(class="container-centered-horizontal text-centered" method="post" action="/joinRoom")
+      input(type="text" name="roomId")
+      input(type="text" name="accessCode")
+      input(class="button-default" type="submit" value="Join Room")

@@ -5,7 +5,10 @@ var router = express.Router();
 var spotifyApi = new SpotifyApi();
 spotifyApi.setup();
 
-var roomIds = new Object();
+var roomIdsToPlaylistIds = new Object();
+var hostIdsToRoomIds = new Object();
+var privateRoomIdsToAccessCodes = new Object();
+var roomIdsToRoomNames = new Object();
 
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
@@ -14,31 +17,10 @@ var links = [
   				  endpoint: "/login" }
   			]
 
-var dummyTracks = [
-											{ id: 123,
-												name: "Silver Lining",
-												artist: "Oddisee"
-											},
-											{ id: 234123,
-												name: "All the Secrets",
-												artist: "Flying Lotus"
-											}
-									]
-
 var dummyMetadata = {
   							role: "host",
   							uid: 123243434,
-  							rid: 1243254305943,
-  						}
-
-// router.get('/room', function(req, res, next) {
-//   res.render('room', { title: 'uSHARE',
-//   						links: links,
-//   						// tracks: JSON.stringify([]),
-//   						tracks: JSON.stringify(dummyTracks),
-//   						metadata: JSON.stringify(dummyMetadata), 						
-//   					});
-// });
+  							rid: 1243254305943 }
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'uSHARE',
@@ -51,35 +33,91 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
-  res.render('promptCreateOrJoin', { title: 'uSHARE' });
-  /*spotifyApi.getPlaylists(function(error, response, body) {
-    console.log(body);
-  });*/
-});
-
-router.post('/newPlaylist', function(req, res, next) {
-  spotifyApi.createPlaylist(req.body.playlistName, function(error, response, body) {
-    if (error)
-      console.log('create playlist error');
-    else {
-      var playlistBodyObject = JSON.parse(body);
-      var roomId = generateRandomString(10);
-      while (roomId in roomIds)
-        roomId = generateRandomString(10);
-
-      roomIds[roomId] = playlistBodyObject.id;
-
-      console.log('playlist created');
-      res.redirect('/room/' + roomId);
+  spotifyApi.getPlaylists(function(error, response, body) {
+    if (error) {
+      res.render('error', { message: 'Could not get playlists',
+                            error: error });
+    } else {
+      res.render('promptCreateOrJoin', { title: 'uSHARE',
+                                          playlists: JSON.stringify(body)});
     }
   });
 });
 
+router.post('/newPlaylist', function(req, res, next) {
+  var userId = spotifyApi.getUserID();
+  if (userId in hostIdsToRoomIds)
+    console.log('You cannot host more than 1 room');
+  else {
+    if (req.body.playlistName == undefined || req.body.playlistName == "")
+      console.log('Playlist name is empty');
+    else {
+      spotifyApi.createPlaylist(req.body.playlistName, function(error, response, body) {
+        if (error)
+          res.render('error', { message: 'Cannot create playlist',
+                            error: error });
+        else {
+          var playlistBodyObject = JSON.parse(body);
+          var roomId = generateRandomString(10);
+          while (roomId in roomIdsToPlaylistIds)
+            roomId = generateRandomString(10);
+
+          roomIdsToPlaylistIds[roomId] = playlistBodyObject.id;
+          hostIdsToRoomIds[userId] = roomId;
+          roomIdsToRoomNames[roomId] = req.body.roomName;
+          if (req.body.isPrivate) {
+            if (req.body.accessCode == undefined || req.body.accessCode == "")
+              console.log('No access code used. Room will be public.');
+            else
+              privateRoomIdsToAccessCodes[roomId] = req.body.accessCode;
+          }
+
+          req.session.roomId = roomId;
+
+          console.log('playlist created');
+          res.redirect('/room/' + roomId);
+        }
+      });
+    }
+  }
+});
+
+router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode', function(req, res, next) {
+  var userId = spotifyApi.getUserID();
+  if (userId in hostIdsToRoomIds)
+    console.log('You cannot host more than 1 room');
+  else {
+    var roomId = generateRandomString(10);
+    while (roomId in roomIdsToPlaylistIds)
+      roomId = generateRandomString(10);
+
+    roomIdsToPlaylistIds[roomId] = req.params.playlistId;
+    hostIdsToRoomIds[userId] = roomId;
+    roomIdsToRoomNames[roomId] = req.params.roomName;
+
+    if (req.body.isPrivate) {
+      if (req.body.accessCode == undefined || req.body.accessCode == "")
+        console.log('No access code used. Room will be public.');
+      else
+        privateRoomIdsToAccessCodes[roomId] = req.body.accessCode;
+    }
+
+    req.session.roomId = roomId;
+
+    console.log('got existing playlist');
+    res.redirect('/room/' + roomId);
+  }
+});
+
 router.post('/joinRoom', function(req, res, next) {
-  if (!(req.body.roomId in roomIds))
+  if (!(req.body.roomId in roomIdsToPlaylistIds))
     console.log('Not a valid room ID');
-  else
-    res.redirect('/' + req.body.roomId);
+  else {
+    if (req.body.accessCode != privateRoomIdsToAccessCodes[req.body.roomId])
+      console.log('Invalid access code');
+    else
+      res.redirect('/room/' + req.body.roomId);
+  }
 });
 
 /*
@@ -90,10 +128,10 @@ router.get('/room/:roomId', function(req, res, next) {
   var roomId = req.params.roomId;
 
   //TO DO: handle access code stuff
-  if (roomId in roomIds) {
+  if (roomId in roomIdsToPlaylistIds) {
     //TODO: generate room metadata dynamically
-    dummyMetadata["playlistId"] = roomIds[roomId];
     dummyMetadata['rid'] = roomId;
+    dummyMetadata["playlistId"] = roomIdsToPlaylistIds[roomId];
 
     res.render('room', { 
                           title: "DON'T LET YOUR MEMES BE DREAMS",

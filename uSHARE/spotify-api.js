@@ -20,6 +20,7 @@ SpotifyApi.prototype = {
   promptLogin: function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
+    // console.log("in prompt login");
 
     // Request authorization for app
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -73,7 +74,12 @@ SpotifyApi.prototype = {
 
           // Use access token to get user id
           request.get(options, function(error, response, body) {
+            console.log(body);
+            if (error) {
+              console.log(error);
+            }
             userID = body.id;
+            res.redirect('/promptRoomOption');
           });
 
           // We can also pass the token to the browser to make requests from there
@@ -82,7 +88,6 @@ SpotifyApi.prototype = {
           //     access_token: accessToken,
           //     refresh_token: refreshToken
           //   }));
-          res.redirect('/promptRoomOption');
         } else {
           res.redirect('/#' +
             querystring.stringify({

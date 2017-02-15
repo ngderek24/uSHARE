@@ -12,26 +12,31 @@ socketManager.io = io;
 io.on("connection", function(socket){
   var pid = socket.handshake.query['pid'];
   socket.join(pid);
+  
+  spotifyApi.getPlaylist(pid, function(error, response, body){
+    if (!error) {
+      var playlist = JSON.parse(body);
+      var tracks = new Array();
 
-  spotifyApi.getPlaylist("7zasXV1JnlTMke8IQvCSs1", function(error, response, body){
-    var playlist = JSON.parse(body);
-    var tracks = new Array();
+      (playlist.tracks.items).forEach(function(d){   
+        var artists = new Array();
 
-    (playlist.tracks.items).forEach(function(d){   
-      var artists = new Array();
+        for(var i = 0; i < d.track.artists.length; i++){
+          artists.push(d.track.artists[i].name);
+        }
 
-      for(var i = 0; i < d.track.artists.length; i++){
-        artists.push(d.track.artists[i].name);
-      }
+        tracks.push({
+                      id: d.track.id,
+                      name: d.track.name,
+                      artist: artists.join(),
+                    });
+      });
 
-      tracks.push({
-                    id: d.track.id,
-                    name: d.track.name,
-                    artist: artists.join(),
-                  });
-    });
-
-    socket.emit('playlist_loaded', { tracks: tracks });
+      socket.emit('playlist_loaded', { tracks: tracks });
+    } else {
+      console.log(error);
+      console.log('get playlist error');
+    }
   });
 
   socket.on('add_track', function(data){
