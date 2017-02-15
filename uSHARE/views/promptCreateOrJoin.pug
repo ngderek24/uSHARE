@@ -19,16 +19,18 @@ block content
                 tbody
                   tr(ng-repeat="playlist in playlists" id="{{playlist.id}}")
                     td {{::playlist.name}}
-                    td
-                      form(class="container-centered-horizontal text-centered" method="post" action="/playlist/playlist.id")
-                        input(class="button-default" type="submit" value="Choose")
+                    td 
+                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.id)") Choose
           div(class="modal-footer")
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
 
     button(class="button-default" type="button" data-toggle="modal" data-target="#createRoomModal") Create Room From An Existing Playlist
     form(class="container-centered-horizontal text-centered" method="post" action="/newPlaylist")
       input(type="text" name="playlistName")
+      input(type="checkbox" name="isPrivate")
+      input(type="text" name="accessCode")
       input(class="button-default" type="submit" value="Create Room With An Empty Playlist")
     form(class="container-centered-horizontal text-centered" method="post" action="/joinRoom")
-      input(type="text" name="roomAccessCode")
+      input(type="text" name="roomId")
+      input(type="text" name="accessCode")
       input(class="button-default" type="submit" value="Join Room")
