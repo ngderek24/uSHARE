@@ -7,7 +7,7 @@ angular.module("ushare").controller("roomOptionController", function($scope, $ht
 		});
 	}
 
-	$scope.choosePlaylist = function(playlistId, isPrivate, accessCode) {
-		$window.location.href = '/playlist/' + playlistId + '/' + isPrivate + '/' + accessCode;
+	$scope.choosePlaylist = function(roomName, playlistId, isPrivate, accessCode) {
+		$window.location.href = '/playlist/' + roomName + '/' + playlistId + '/' + isPrivate + '/' + accessCode;
 	}
 });

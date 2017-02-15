@@ -14,19 +14,22 @@ block content
               table(class="table table-striped")
                 thead
                   tr
+                    th Room Name
                     th Playlist Name
                     th Private
                     th Access Code
                     th Create
                 tbody
                   tr(ng-repeat="playlist in playlists" id="{{playlist.id}}")
+                    td 
+                      input(type="text" ng-model="playlist.roomName")
                     td {{::playlist.name}}
                     td
                       input(type="checkbox" ng-checked="playlist.isPrivate")
                     td
                       input(type="text" ng-model="playlist.accessCode")
                     td 
-                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.id, playlist.isPrivate, playlist.accessCode)") Choose
+                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.roomName, playlist.id, playlist.isPrivate, playlist.accessCode)") Choose
           div(class="modal-footer")
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
 
