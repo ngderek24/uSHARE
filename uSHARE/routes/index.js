@@ -145,9 +145,10 @@ router.get('/room/:roomId', function(req, res, next) {
 router.get('/closeRoom/:rid', function(req, res, next){
   var rid = req.params.rid;
 
-  for(roomId in roomIds){
+  //TODO: remove entries from other tables too
+  for(roomId in roomIdsToPlaylistIds){
     if(roomId == rid){
-      delete roomIds[roomId];
+      delete roomIdsToPlaylistIds[roomId];
       break;
     }
   }
