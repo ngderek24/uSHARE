@@ -44,15 +44,15 @@ router.get('/promptRoomOption', function(req, res, next) {
   });
 });
 
-router.post('/newPlaylist', function(req, res, next) {
+router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', function(req, res, next) {
   var userId = spotifyApi.getUserID();
   if (userId in hostIdsToRoomIds)
     console.log('You cannot host more than 1 room');
   else {
-    if (req.body.playlistName == undefined || req.body.playlistName == "")
+    if (req.params.playlistName == undefined || req.params.playlistName == "")
       console.log('Playlist name is empty');
     else {
-      spotifyApi.createPlaylist(req.body.playlistName, function(error, response, body) {
+      spotifyApi.createPlaylist(req.params.playlistName, function(error, response, body) {
         if (error)
           res.render('error', { message: 'Cannot create playlist',
                             error: error });
@@ -64,12 +64,12 @@ router.post('/newPlaylist', function(req, res, next) {
 
           roomIdsToPlaylistIds[roomId] = playlistBodyObject.id;
           hostIdsToRoomIds[userId] = roomId;
-          roomIdsToRoomNames[roomId] = req.body.roomName;
-          if (req.body.isPrivate) {
-            if (req.body.accessCode == undefined || req.body.accessCode == "")
+          roomIdsToRoomNames[roomId] = req.params.roomName;
+          if (req.params.isPrivate) {
+            if (req.params.accessCode == undefined || req.params.accessCode == "")
               console.log('No access code used. Room will be public.');
             else
-              privateRoomIdsToAccessCodes[roomId] = req.body.accessCode;
+              privateRoomIdsToAccessCodes[roomId] = req.params.accessCode;
           }
 
           req.session.roomId = roomId;
