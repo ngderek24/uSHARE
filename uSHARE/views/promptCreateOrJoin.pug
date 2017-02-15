@@ -15,17 +15,24 @@ block content
                 thead
                   tr
                     th Playlist Name
+                    th Private
+                    th Access Code
                     th Create
                 tbody
                   tr(ng-repeat="playlist in playlists" id="{{playlist.id}}")
                     td {{::playlist.name}}
+                    td
+                      input(type="checkbox" ng-checked="playlist.isPrivate")
+                    td
+                      input(type="text" ng-model="playlist.accessCode")
                     td 
-                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.id)") Choose
+                      button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.id, playlist.isPrivate, playlist.accessCode)") Choose
           div(class="modal-footer")
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
 
     button(class="button-default" type="button" data-toggle="modal" data-target="#createRoomModal") Create Room From An Existing Playlist
     form(class="container-centered-horizontal text-centered" method="post" action="/newPlaylist")
+      input(type="text" name="roomName")
       input(type="text" name="playlistName")
       input(type="checkbox" name="isPrivate")
       input(type="text" name="accessCode")

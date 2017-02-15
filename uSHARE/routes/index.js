@@ -8,6 +8,7 @@ spotifyApi.setup();
 var roomIdsToPlaylistIds = new Object();
 var hostIdsToRoomIds = new Object();
 var privateRoomIdsToAccessCodes = new Object();
+var roomIdsToRoomNames = new Object();
 
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
@@ -61,6 +62,7 @@ router.post('/newPlaylist', function(req, res, next) {
 
           roomIdsToPlaylistIds[roomId] = playlistBodyObject.id;
           hostIdsToRoomIds[userId] = roomId;
+          roomIdsToRoomNames[roomId] = req.body.roomName;
           if (req.body.isPrivate) {
             if (req.body.accessCode == undefined || req.body.accessCode == "")
               console.log('No access code used. Room will be public.');
@@ -78,8 +80,7 @@ router.post('/newPlaylist', function(req, res, next) {
   }
 });
 
-router.get('/playlist/:playlistId', function(req, res, next) {
-  console.log(req.params.playlistId);
+router.get('/playlist/:playlistId/:isPrivate/:accessCode', function(req, res, next) {
   var userId = spotifyApi.getUserID();
   if (userId in hostIdsToRoomIds)
     console.log('You cannot host more than 1 room');
@@ -90,6 +91,14 @@ router.get('/playlist/:playlistId', function(req, res, next) {
 
     roomIdsToPlaylistIds[roomId] = req.params.playlistId;
     hostIdsToRoomIds[userId] = roomId;
+
+    if (req.body.isPrivate) {
+      if (req.body.accessCode == undefined || req.body.accessCode == "")
+        console.log('No access code used. Room will be public.');
+      else
+        privateRoomIdsToAccessCodes[roomId] = req.body.accessCode;
+    }
+
     req.session.roomId = roomId;
 
     console.log('got existing playlist');
