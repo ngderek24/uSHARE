@@ -49,36 +49,32 @@ router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', functi
   if (userId in hostIdsToRoomIds)
     console.log('You cannot host more than 1 room');
   else {
-    if (req.params.playlistName == undefined || req.params.playlistName == "")
-      console.log('Playlist name is empty');
-    else {
-      spotifyApi.createPlaylist(req.params.playlistName, function(error, response, body) {
-        if (error)
-          res.render('error', { message: 'Cannot create playlist',
-                            error: error });
-        else {
-          var playlistBodyObject = JSON.parse(body);
-          var roomId = generateRandomString(10);
-          while (roomId in roomIdsToPlaylistIds)
-            roomId = generateRandomString(10);
+    spotifyApi.createPlaylist(req.params.playlistName, function(error, response, body) {
+      if (error)
+        res.render('error', { message: 'Cannot create playlist',
+                          error: error });
+      else {
+        var playlistBodyObject = JSON.parse(body);
+        var roomId = generateRandomString(10);
+        while (roomId in roomIdsToPlaylistIds)
+          roomId = generateRandomString(10);
 
-          roomIdsToPlaylistIds[roomId] = playlistBodyObject.id;
-          hostIdsToRoomIds[userId] = roomId;
-          roomIdsToRoomNames[roomId] = req.params.roomName;
-          if (req.params.isPrivate) {
-            if (req.params.accessCode == undefined || req.params.accessCode == "")
-              console.log('No access code used. Room will be public.');
-            else
-              privateRoomIdsToAccessCodes[roomId] = req.params.accessCode;
-          }
-
-          req.session.roomId = roomId;
-
-          console.log('playlist created');
-          res.redirect('/room/' + roomId);
+        roomIdsToPlaylistIds[roomId] = playlistBodyObject.id;
+        hostIdsToRoomIds[userId] = roomId;
+        roomIdsToRoomNames[roomId] = req.params.roomName;
+        if (req.params.isPrivate) {
+          if (req.params.accessCode == undefined || req.params.accessCode == "")
+            console.log('No access code used. Room will be public.');
+          else
+            privateRoomIdsToAccessCodes[roomId] = req.params.accessCode;
         }
-      });
-    }
+
+        req.session.roomId = roomId;
+
+        console.log('playlist created');
+        res.redirect('/room/' + roomId);
+      }
+    });
   }
 });
 

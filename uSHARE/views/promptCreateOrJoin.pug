@@ -23,11 +23,12 @@ block content
                   tr(ng-repeat="playlist in playlists" id="{{playlist.id}}")
                     td 
                       input(type="text" ng-model="playlist.roomName" class="form-control")
+                      label(ng-show="playlist.roomNameNeeded" class="input-required") You must enter a room name.
                     td {{::playlist.name}}
                     td
-                      input(type="checkbox" ng-checked="playlist.isPrivate")
+                      input(type="checkbox" ng-model="playlist.isPrivate")
                     td
-                      input(type="text" ng-model="playlist.accessCode" class="form-control")
+                      input(type="text" ng-model="playlist.accessCode" class="form-control" ng-disabled="!playlist.isPrivate")
                     td 
                       button(type="button" class="btn btn-default" ng-click="choosePlaylist(playlist.roomName, playlist.id, playlist.isPrivate, playlist.accessCode)") Choose
           div(class="modal-footer")
@@ -46,15 +47,17 @@ block content
               div(class="form-group")
                 label Room Name:
                 input(type="text" ng-model="newPlaylist.roomName" class="form-control")
+                label(ng-show="newPlaylist.roomNameNeeded" class="input-required") You must enter a room name.
               div(class="form-group")
                 label Playlist Name:
                 input(type="text" ng-model="newPlaylist.playlistName" class="form-control")
+                label(ng-show="newPlaylist.playlistNameNeeded" class="input-required") You must enter a playlist name.
               div(class="form-group")
                 label Private
                 input(type="checkbox" ng-model="newPlaylist.isPrivate")
               div(class="form-group")
                 label Access Code:
-                input(type="text" ng-model="newPlaylist.accessCode" class="form-control")
+                input(type="text" ng-model="newPlaylist.accessCode" class="form-control" ng-disabled="!newPlaylist.isPrivate")
           div(class="modal-footer")
             button(type="button" class="btn btn-success" ng-click="newPlaylist()") Create
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
