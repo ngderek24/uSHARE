@@ -145,14 +145,29 @@ router.get('/room/:roomId', function(req, res, next) {
 router.get('/closeRoom/:rid', function(req, res, next){
   var rid = req.params.rid;
 
-  //TODO: remove entries from other tables too
-  for(roomId in roomIdsToPlaylistIds){
-    if(roomId == rid){
+  for (roomId in roomIdsToPlaylistIds) {
+    if (roomId == rid) {
       delete roomIdsToPlaylistIds[roomId];
       break;
     }
   }
+
+  delete hostIdsToRoomIds[spotifyApi.getUserID()];
   
+  for (privateRoomId in privateRoomIdsToAccessCodes) {
+    if (privateRoomId == rid) {
+      delete privateRoomIdsToAccessCodes[privateRoomId];
+      break;
+    }
+  }
+  
+  for (roomId in roomIdsToRoomNames) {
+    if (roomId == rid) {
+      delete roomIdsToRoomNames[roomId];
+      break;
+    }
+  }
+
   res.redirect('/promptRoomOption');
 });
 
