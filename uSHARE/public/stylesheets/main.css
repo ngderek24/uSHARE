@@ -46,3 +46,11 @@ a {
 /*table th{
 	text-align: center;
 }*/
+
+.form-inline > * {
+	margin: 10px 20px;
+}
+
+.input-required {
+	color: red;
+}
