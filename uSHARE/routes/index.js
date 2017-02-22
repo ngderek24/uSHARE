@@ -33,15 +33,20 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
-  spotifyApi.getPlaylists(function(error, response, body) {
-    if (error) {
-      res.render('error', { message: 'Could not get playlists',
-                            error: error });
-    } else {
-      res.render('promptCreateOrJoin', { title: 'uSHARE',
-                                          playlists: JSON.stringify(body)});
-    }
-  });
+  var userId = spotifyApi.getUserID();
+  if (userId in hostIdsToRoomIds) {
+    res.redirect('/room/' + hostIdsToRoomIds[userId]);
+  } else {
+    spotifyApi.getPlaylists(function(error, response, body) {
+      if (error) {
+        res.render('error', { message: 'Could not get playlists',
+                              error: error });
+      } else {
+        res.render('promptCreateOrJoin', { title: 'uSHARE',
+                                            playlists: JSON.stringify(body)});
+      }
+    });
+  }
 });
 
 router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', function(req, res, next) {
