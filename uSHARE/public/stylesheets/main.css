@@ -54,3 +54,7 @@ a {
 .input-required {
 	color: red;
 }
+
+.content-wrapped {
+	display: inline-block;
+}

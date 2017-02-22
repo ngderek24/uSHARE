@@ -2,7 +2,7 @@ extends layout
 
 block content
   page-header(title=title)
-  div(class="container-centered-horizontal container-padded" ng-controller='roomOptionController' ng-init='initPlaylistsModal(' + playlists + ')')
+  div(class="container-centered-horizontal container-padded" ng-controller='roomOptionController' ng-init='initPlaylistsModal(' + playlists + ',' + roomIdsToPlaylistIds + ',' + roomIdsToRoomNames + ',' + privateRooms + ')')
     div(class="modal fade" id="selectPlaylistModal" role="dialog")
       div(class="modal-dialog modal-lg")
         div(class="modal-content")
@@ -34,8 +34,6 @@ block content
           div(class="modal-footer")
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
 
-    button(class="btn btn-default" type="button" data-toggle="modal" data-target="#selectPlaylistModal") Create Room From An Existing Playlist
-
     div(class="modal fade" id="newPlaylistModal" role="dialog")
       div(class="modal-dialog modal-sm")
         div(class="modal-content")
@@ -62,7 +60,9 @@ block content
             button(type="button" class="btn btn-success" ng-click="newPlaylist()") Create
             button(type="button" class="btn btn-default" data-dismiss="modal") Close
 
-    button(class="btn btn-default" type="button" data-toggle="modal" data-target="#newPlaylistModal") Create Room With An Empty Playlist
+    div(class="container-centered-horizontal text-centered container-padded")
+      button(class="btn btn-default" type="button" data-toggle="modal" data-target="#selectPlaylistModal") Create Room From An Existing Playlist
+      button(class="btn btn-default" type="button" data-toggle="modal" data-target="#newPlaylistModal") Create Room With An Empty Playlist
 
     form(class="container-centered-horizontal text-centered form-inline" method="post" action="/joinRoom")
       div(class="form-group")
@@ -72,3 +72,22 @@ block content
         label Access Code:
         input(type="text" name="accessCode" class="form-control")
       button(class="btn btn-default" type="submit") Join Room
+
+    div(class="container-centered-horizontal table-container")
+      table(class="table table-striped")
+        thead
+          tr
+            th Room Name
+            th Private
+            th Access Code
+            th
+        tbody
+          tr(ng-repeat="room in rooms" id="{{room.id}}")
+            td {{::room.name}}
+            td
+              div(ng-if="room.isPrivate==true") &#10004;
+              div(ng-if="room.isPrivate==false") &#10006;
+            td
+              input(type="text" ng-model="room.accessCode" class="form-control" ng-disabled="!room.isPrivate")
+            td 
+              button(type="button" class="btn btn-default" ng-click="joinRoom(room.id, room.accessCode)") Join

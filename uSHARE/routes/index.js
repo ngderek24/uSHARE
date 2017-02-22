@@ -42,7 +42,7 @@ router.get('/promptRoomOption', function(req, res, next) {
                                           playlists: JSON.stringify(body),
                                           roomIdsToPlaylistIds: JSON.stringify(roomIdsToPlaylistIds),
                                           roomIdsToRoomNames: JSON.stringify(roomIdsToRoomNames),
-                                          privateRooms: JSON.stringify(privateRoomIdsToAccessCodes)});
+                                          privateRooms: JSON.stringify(Object.keys(privateRoomIdsToAccessCodes))});
     }
   });
 });
@@ -81,7 +81,7 @@ router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', functi
   }
 });
 
-router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode', function(req, res, next) {
+router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode?', function(req, res, next) {
   var userId = spotifyApi.getUserID();
   if (userId in hostIdsToRoomIds)
     console.log('You cannot host more than 1 room');
@@ -93,8 +93,8 @@ router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode', function(re
     roomIdsToPlaylistIds[roomId] = req.params.playlistId;
     hostIdsToRoomIds[userId] = roomId;
     roomIdsToRoomNames[roomId] = req.params.roomName;
-
-    if (req.params.isPrivate) {
+    
+    if (req.params.isPrivate == "true") {      
       if (req.params.accessCode == undefined || req.params.accessCode == "")
         console.log('No access code used. Room will be public.');
       else{
@@ -110,14 +110,14 @@ router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode', function(re
   }
 });
 
-router.post('/joinRoom', function(req, res, next) {
-  if (!(req.body.roomId in roomIdsToPlaylistIds))
+router.get('/joinRoom/:roomId/:accessCode?', function(req, res, next) {
+  if (!(req.params.roomId in roomIdsToPlaylistIds))
     console.log('Not a valid room ID');
   else {
-    if (req.body.accessCode != privateRoomIdsToAccessCodes[req.body.roomId])
+    if (req.params.accessCode && req.params.accessCode != privateRoomIdsToAccessCodes[req.params.roomId])
       console.log('Invalid access code');
     else
-      res.redirect('/room/' + req.body.roomId);
+      res.redirect('/room/' + req.params.roomId);
   }
 });
 
@@ -156,7 +156,7 @@ router.get('/closeRoom/:rid', function(req, res, next){
   delete hostIdsToRoomIds[spotifyApi.getUserID()];
   
   for (privateRoomId in privateRoomIdsToAccessCodes) {
-    if (privateRoomId == rid) {
+    if (privateRoomId == rid) {    
       delete privateRoomIdsToAccessCodes[privateRoomId];
       break;
     }

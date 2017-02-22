@@ -1,7 +1,7 @@
 angular.module("ushare").controller("roomOptionController", function($scope, $http, $window) {
   $scope.newPlaylist;
 
-  $scope.initPlaylistsModal = function(playlists) {
+  $scope.initPlaylistsModal = function(playlists, roomIdsToPlaylistIds, roomIdsToRoomNames, privateRooms) {
     $scope.playlists = playlists.playlists;
     $scope.playlists.map(function(playlist) {
       playlist.isPrivate = false;
@@ -15,6 +15,21 @@ angular.module("ushare").controller("roomOptionController", function($scope, $ht
     $scope.newPlaylist.roomNameNeeded = false;
     $scope.newPlaylist.playlistNameNeeded = false;
     $scope.newPlaylist.accessCodeNeeded = false;
+
+    //literally never do this irl
+    $scope.rooms = new Array();
+    for(var id_playlist in roomIdsToPlaylistIds){
+      for(var id_name in roomIdsToRoomNames){
+        if(id_playlist == id_name){
+          $scope.rooms.push({ "id": id_playlist,
+                              "name": roomIdsToRoomNames[id_name],
+                              "isPrivate": privateRooms.indexOf(id_playlist) > -1 ? true : false,
+                            });
+        }
+      }
+    }
+
+    console.log($scope.rooms);
   }
 
   $scope.choosePlaylist = function(roomName, playlistId, isPrivate, accessCode) {
@@ -26,7 +41,7 @@ angular.module("ushare").controller("roomOptionController", function($scope, $ht
         }
       }
     }
-    
+
     $window.location.href = '/playlist/' + roomName + '/' + playlistId + '/' + isPrivate + '/' + accessCode;
   }
 
@@ -43,5 +58,13 @@ angular.module("ushare").controller("roomOptionController", function($scope, $ht
 
     $window.location.href = '/newPlaylist/' + $scope.newPlaylist.roomName + '/' + $scope.newPlaylist.playlistName + '/' + 
                               $scope.newPlaylist.isPrivate + '/' + $scope.newPlaylist.accessCode;
+  }
+
+  $scope.joinRoom = function(roomId, accessCode){
+    if(accessCode){
+      $window.location.href = '/joinRoom/' + roomId + '/' + accessCode;
+    }else{
+      $window.location.href = '/joinRoom/' + roomId;
+    }
   }
 });
