@@ -39,7 +39,10 @@ router.get('/promptRoomOption', function(req, res, next) {
                             error: error });
     } else {
       res.render('promptCreateOrJoin', { title: 'uSHARE',
-                                          playlists: JSON.stringify(body)});
+                                          playlists: JSON.stringify(body),
+                                          roomIdsToPlaylistIds: JSON.stringify(roomIdsToPlaylistIds),
+                                          roomIdsToRoomNames: JSON.stringify(roomIdsToRoomNames),
+                                          privateRooms: JSON.stringify(privateRoomIdsToAccessCodes)});
     }
   });
 });
@@ -91,11 +94,13 @@ router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode', function(re
     hostIdsToRoomIds[userId] = roomId;
     roomIdsToRoomNames[roomId] = req.params.roomName;
 
-    if (req.body.isPrivate) {
-      if (req.body.accessCode == undefined || req.body.accessCode == "")
+    if (req.params.isPrivate) {
+      if (req.params.accessCode == undefined || req.params.accessCode == "")
         console.log('No access code used. Room will be public.');
-      else
-        privateRoomIdsToAccessCodes[roomId] = req.body.accessCode;
+      else{
+        console.log("PRIVATE ROOM CREATION");
+        privateRoomIdsToAccessCodes[roomId] = req.params.accessCode;
+      }
     }
 
     req.session.roomId = roomId;
