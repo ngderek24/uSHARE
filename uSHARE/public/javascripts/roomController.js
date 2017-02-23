@@ -71,7 +71,7 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
       window.location.href = "/closeRoom/" + $scope.rid;
     }
     else{
-      window.location.href = "/promptRoomOption";
+      window.location.href = "/leaveRoom";
     }
   }
 }]);

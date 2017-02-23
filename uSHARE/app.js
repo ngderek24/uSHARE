@@ -29,17 +29,14 @@ app.use(session({
                   saveUninitialized: true
                 }));
 
-function loggedInView(req, res, next) {
-    if(!req.session.loggedIn){
-      res.locals.loggedIn = false;
-    }else{
-      res.locals.loggedIn = req.session.loggedIn;      
-    }
-    next();
-}
-
-app.use(loggedInView);
-
+app.use(function(req, res, next) {
+  if(!req.session.loggedIn){
+    res.locals.loggedIn = false;
+  }else{
+    res.locals.loggedIn = req.session.loggedIn;      
+  }
+  next();
+});
 
 // handles client angular requests for view partials
 app.get('/partials/:name', function(req, res){
