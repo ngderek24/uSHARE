@@ -23,9 +23,15 @@ var dummyMetadata = {
   							rid: 1243254305943 }
 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'uSHARE',
-              links: links
-            });
+  if((spotifyApi.getUserID() && spotifyApi.getUserID().length > 0) && 
+      (req.session.loggedIn && req.session.loggedIn == true)){
+    res.redirect('/promptRoomOption');
+  }
+  else{
+    res.render('index', { title: 'uSHARE',
+                links: links
+              });
+  }
 });
 
 router.get('/login', spotifyApi.promptLogin);
@@ -33,6 +39,9 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
+  req.session.loggedIn = true;
+  res.locals.loggedIn = true;
+
   spotifyApi.getPlaylists(function(error, response, body) {
     if (error) {
       res.render('error', { message: 'Could not get playlists',
@@ -170,6 +179,12 @@ router.get('/closeRoom/:rid', function(req, res, next){
   }
 
   res.redirect('/promptRoomOption');
+});
+
+router.get('/logout', function(req, res, next){
+  req.session.loggedIn = false;
+  res.locals.loggedIn = false;
+  res.redirect('/');
 });
 
 function generateRandomString(length) {

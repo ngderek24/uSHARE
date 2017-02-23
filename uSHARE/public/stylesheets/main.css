@@ -58,3 +58,12 @@ a {
 .content-wrapped {
 	display: inline-block;
 }
+
+.margin-20{
+	margin: 0px 20px;
+}
+
+.header-form{
+	text-align: right;
+	padding-top: 20px;
+}
