@@ -1,4 +1,4 @@
-angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', function($scope, scopeSharer) {
+angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', '$http', function($scope, scopeSharer, $http) {
   $scope.tracks = new Array();
   $scope.role = "";  
   $scope.socket;
@@ -60,8 +60,8 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     $scope.socket.emit('remove_track', { id: id });
   }
 
-  $scope.add = function(id){
-    $scope.socket.emit('add_track', { id: id });
+  $scope.add = function(id, name, artist){
+    $scope.socket.emit('add_track', { id: id, name: name, artist: artist });
   }
 
   $scope.postModal = function(){
@@ -74,4 +74,44 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
       window.location.href = "/leaveRoom";
     }
   }
+
+  $scope.display_data = new Array();
+  $scope.suggestedTracks = new Array();
+  $scope.updateSuggestions = function(query){
+    $scope.display_data = [];
+    $scope.suggestedTracks = [];
+    return $http.get('https://api.spotify.com/v1/search?', {
+      params: {
+        q: encodeURIComponent(query),
+        type: "track",
+        limit: 10
+      }
+    }).then(function(response){
+      var results = (response.data)['tracks'];
+
+      for(var i = 0; i < results['items'].length; i++){
+        $scope.display_data.push(results['items'][i]['artists'][0]['name'] + " - " + results['items'][i]['name']);
+        $scope.suggestedTracks.push({'id': results['items'][i]['id'],
+                                    'name': results['items'][i]['name'],
+                                    'artist': results['items'][i]['artists'][0]['name']});
+      }
+      return $scope.display_data;
+    })
+  }
+
+  function arrayObjectIndexOf(arr, obj){
+    for(var i = 0; i < arr.length; i++){
+        if(angular.equals(arr[i], obj)){
+            return i;
+        }
+    };
+    return -1;
+  }
+
+  $scope.submit = function() {
+    var selected = $scope.suggestedTracks[arrayObjectIndexOf($scope.display_data, $scope.searchString)];
+    $scope.add(selected['id'], selected['name'], selected['artist']);
+    $scope.searchString = "";
+  }
+
 }]);
