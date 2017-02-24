@@ -1,4 +1,4 @@
-angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', '$http', function($scope, scopeSharer, $http) {
+angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', '$http', '$window', function($scope, scopeSharer, $http, $window) {
   $scope.tracks = new Array();
   $scope.role = "";  
   $scope.socket;
@@ -58,6 +58,8 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
 
   $scope.remove = function(id){
     $scope.socket.emit('remove_track', { id: id });
+
+    $window.location.href = '/removeTrack/' + $scope.rid + '/' + $scope.playlist_id + '/spotify:track:' + id ;
   }
 
   $scope.add = function(id, name, artist){
@@ -93,7 +95,8 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
         $scope.display_data.push(results['items'][i]['artists'][0]['name'] + " - " + results['items'][i]['name']);
         $scope.suggestedTracks.push({'id': results['items'][i]['id'],
                                     'name': results['items'][i]['name'],
-                                    'artist': results['items'][i]['artists'][0]['name']});
+                                    'artist': results['items'][i]['artists'][0]['name'],
+                                    'uri': results['items'][i]['uri']});
       }
       return $scope.display_data;
     })
@@ -112,6 +115,8 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     var selected = $scope.suggestedTracks[arrayObjectIndexOf($scope.display_data, $scope.searchString)];
     $scope.add(selected['id'], selected['name'], selected['artist']);
     $scope.searchString = "";
+
+    $window.location.href = '/addTrack/' + $scope.rid + '/' + $scope.playlist_id + '/' + selected['uri'];
   }
 
 }]);

@@ -13,9 +13,14 @@ var roomIdsToRoomNames = new Object();
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
 var links = [
-      				{ name:"Login via Spotify",
-      				  endpoint: "/login" }
-            ]
+          { name:"Login via Spotify",
+            endpoint: "/login" }
+        ]
+
+var dummyMetadata = {
+                role: "host",
+                uid: 123243434,
+                rid: 1243254305943 }
 
 router.get('/', function(req, res, next) {
   if(req.session.rid){
@@ -189,6 +194,30 @@ router.get('/logout', function(req, res, next){
   res.locals.loggedIn = false;
   req.session.rid = null;
   res.redirect('/');
+});
+
+router.get('/addTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+  spotifyApi.addTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+    console.log(body);
+    if (error) {
+      res.render('error', { message: 'Could not add track',
+                            error: error });
+    } else {
+      res.redirect('/room/' + req.params.roomId);
+    }
+  });
+});
+
+router.get('/removeTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+  spotifyApi.removeTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+    console.log(body);
+    if (error) {
+      res.render('error', { message: 'Could not add track',
+                            error: error });
+    } else {
+      res.redirect('/room/' + req.params.roomId);
+    }
+  });
 });
 
 function generateRandomString(length) {
