@@ -20,7 +20,6 @@ SpotifyApi.prototype = {
   promptLogin: function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
-    // console.log("in prompt login");
 
     // Request authorization for app
     res.redirect('https://accounts.spotify.com/authorize?' +

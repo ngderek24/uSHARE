@@ -13,9 +13,14 @@ var roomIdsToRoomNames = new Object();
 // TODO: fix spotify url endpoint
 // TODO: pass template the approriate links based on user login status
 var links = [
-      				{ name:"Login via Spotify",
-      				  endpoint: "/login" }
-            ]
+          { name:"Login via Spotify",
+            endpoint: "/login" }
+        ]
+
+var dummyMetadata = {
+                role: "host",
+                uid: 123243434,
+                rid: 1243254305943 }
 
 router.get('/', function(req, res, next) {
   if(req.session.rid){
@@ -44,18 +49,20 @@ router.get('/promptRoomOption', function(req, res, next) {
   req.session.loggedIn = true;
   res.locals.loggedIn = true;
 
-  spotifyApi.getPlaylists(function(error, response, body) {
-    if (error) {
-      res.render('error', { message: 'Could not get playlists',
-                            error: error });
-    } else {
-      res.render('promptCreateOrJoin', { title: 'uSHARE',
-                                          playlists: JSON.stringify(body),
-                                          roomIdsToPlaylistIds: JSON.stringify(roomIdsToPlaylistIds),
-                                          roomIdsToRoomNames: JSON.stringify(roomIdsToRoomNames),
-                                          privateRooms: JSON.stringify(Object.keys(privateRoomIdsToAccessCodes))});
-    }
-  });
+  var userId = spotifyApi.getUserID();
+  if (userId in hostIdsToRoomIds) {
+    res.redirect('/room/' + hostIdsToRoomIds[userId]);
+  } else {
+    spotifyApi.getPlaylists(function(error, response, body) {
+      if (error) {
+        res.render('error', { message: 'Could not get playlists',
+                              error: error });
+      } else {
+        res.render('promptCreateOrJoin', { title: 'uSHARE',
+                                            playlists: JSON.stringify(body)});
+      }
+    });
+  }
 });
 
 router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', function(req, res, next) {
@@ -187,6 +194,30 @@ router.get('/logout', function(req, res, next){
   res.locals.loggedIn = false;
   req.session.rid = null;
   res.redirect('/');
+});
+
+router.get('/addTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+  spotifyApi.addTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+    console.log(body);
+    if (error) {
+      res.render('error', { message: 'Could not add track',
+                            error: error });
+    } else {
+      res.redirect('/room/' + req.params.roomId);
+    }
+  });
+});
+
+router.get('/removeTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+  spotifyApi.removeTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+    console.log(body);
+    if (error) {
+      res.render('error', { message: 'Could not add track',
+                            error: error });
+    } else {
+      res.redirect('/room/' + req.params.roomId);
+    }
+  });
 });
 
 function generateRandomString(length) {

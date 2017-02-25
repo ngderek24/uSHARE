@@ -40,27 +40,26 @@ io.on("connection", function(socket){
   });
 
   socket.on('add_track', function(data){
-    socket.to(pid).emit('playlist_changed', { track: { id: 123,
-                                                        name: "Silver Lining",
-                                                        artist: "Oddisee"                                                      
+    console.log(data);
+    socket.to(pid).emit('playlist_changed', { track: { id: data['id'],
+                                                        name: data['name'],
+                                                        artist: data['artist']
                                                       },
                                                status: "add"
                                              });
-    socket.emit('playlist_changed', { track: { id: 123,
-                                         name: "Silver Lining",
-                                         artist: "Oddisee"
+    socket.emit('playlist_changed', { track: { id: data['id'],
+                                                    name: data['name'],
+                                                    artist: data['artist']
                                         },
                                       status: "add"
                                     });
   });
 
   socket.on('remove_track', function(data){
-    socket.to(pid).emit('playlist_changed', { track: { id: data.id
-                                                      },
+    socket.to(pid).emit('playlist_changed', { track: { id: data['id'] },
                                                status: "remove"
                                              });
-    socket.emit('playlist_changed', { track: { id: data.id
-                                           },
+    socket.emit('playlist_changed', { track: { id: data['id'] },
                                       status: "remove"
                                     });
   });

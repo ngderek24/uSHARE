@@ -7,6 +7,27 @@ block content
       div(ng-controller='modalController as m' ng-init="m.initModal(" + metadata +  ")")    
         form(class="container-centered-horizontal text-centered")
           input(class="button-default" type="submit" ng-value="m.modalData.btnLabel" ng-click="m.open()")
+
+      div(class="modal fade" id="searchSongToAdd" role="dialog")
+        div(class="modal-dialog modal-lg")
+          div(class="modal-content")
+            div(class="modal-header")
+              button(type="button" class="close" data-dismiss="modal") &times
+              h4(class="modal-title") Search a Song
+            div(class="modal-body")
+              form(class="container-centered-horizontal text-centered")
+                input(class="form-control" type="text" ng-model="searchString" placeholder="Search for a track or artist" uib-typeahead="entry for entry in updateSuggestions($viewValue)" typeahead-loading="gettingSuggestions" typeahead-no-results="emptyResults")
+                div(ng-show="gettingSuggestions")
+                  i(class="glyphicon glyphicon-refresh")
+                div(class="loading error_message" ng-show="emptyResults")
+                  i(class="glyphicon glyphicon-remove")
+                  span No Results Found
+            div(class="modal-footer")
+              button(type="button" ng-click="submit()" class="btn btn-default" data-dismiss="modal") Add
+              button(type="button" class="btn btn-default" data-dismiss="modal") Close
+
+      button(class="btn btn-default" ng-click="reset()" type="button" data-toggle="modal" data-target="#searchSongToAdd") Search & Add Songs to Playlist
+
       div(class="container-centered-horizontal table-container")
         table(class="table table-striped")
           thead
@@ -19,5 +40,4 @@ block content
               td {{::track.name}}
               td {{::track.artist}}
               td(class="table-column-small")
-                button(class="button-default" ng-click="add(track.id)") +
                 button(class="button-default" ng-click="remove(track.id)") X
