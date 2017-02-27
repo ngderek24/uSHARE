@@ -18,6 +18,9 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     $scope.uid = metadata.uid;
     $scope.rid = metadata.rid;
     $scope.playlist_id = metadata.playlistId;
+    $scope.accessCode = metadata.accessCode;
+    console.log($scope.accessCode)
+
     $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id });
 
     $scope.socket.on('test', function(data){

@@ -10,17 +10,10 @@ var hostIdsToRoomIds = new Object();
 var privateRoomIdsToAccessCodes = new Object();
 var roomIdsToRoomNames = new Object();
 
-// TODO: fix spotify url endpoint
-// TODO: pass template the approriate links based on user login status
 var links = [
           { name:"Login via Spotify",
             endpoint: "/login" }
         ]
-
-var dummyMetadata = {
-                role: "host",
-                uid: 123243434,
-                rid: 1243254305943 }
 
 router.get('/', function(req, res, next) {
   if(req.session.rid){
@@ -117,8 +110,10 @@ router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode?', function(r
 });
 
 router.get('/joinRoom/:roomId/:accessCode?', function(req, res, next) {
-  if (!(req.params.roomId in roomIdsToPlaylistIds))
+  if (!(req.params.roomId in roomIdsToPlaylistIds)){
     console.log('Not a valid room ID');
+    res.redirect('/promptRoomOption');
+  }
   else {
     if (req.params.accessCode && req.params.accessCode != privateRoomIdsToAccessCodes[req.params.roomId])
       console.log('Invalid access code');
@@ -138,12 +133,16 @@ router.get('/room/:roomId', function(req, res, next) {
 
   var role = spotifyApi.getUserID() in hostIdsToRoomIds ? "host" : "guest";
 
-  //TO DO: handle access code stuff
   if (roomId in roomIdsToPlaylistIds) {
     var metadata = {
       role: role,
       rid: roomId,
       playlistId: roomIdsToPlaylistIds[roomId],
+    }
+
+    if (roomId in privateRoomIdsToAccessCodes){
+      metadata["accessCode"] = privateRoomIdsToAccessCodes[roomId];
+      console.log(metadata);
     }
 
     res.render('room', { 
