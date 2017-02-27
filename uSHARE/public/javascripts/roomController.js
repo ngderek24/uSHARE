@@ -32,7 +32,6 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     //When another user did somthing to the playlist
     $scope.socket.on('playlist_changed', function(data){
       if(data.status == "add"){
-        console.log("Track " + data.track.id + " was added.");
         $scope.tracks.push(data.track);
         $scope.$apply();
       }
@@ -58,12 +57,17 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
 
   $scope.remove = function(id){
     $scope.socket.emit('remove_track', { id: id });
-
-    $window.location.href = '/removeTrack/' + $scope.rid + '/' + $scope.playlist_id + '/spotify:track:' + id ;
   }
 
-  $scope.add = function(id, name, artist){
-    $scope.socket.emit('add_track', { id: id, name: name, artist: artist });
+  $scope.add = function(){
+    for(var i = 0; i < $scope.suggestedTracks.length; i++){
+      if($scope.suggestedTracks[i].artist + ' - ' + $scope.suggestedTracks[i].name == $scope.searchString){
+        $scope.socket.emit('add_track', { 
+                                          track: $scope.suggestedTracks[i],
+                                        });
+        break;
+      }
+    }    
   }
 
   $scope.postModal = function(){
@@ -95,9 +99,9 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
         $scope.display_data.push(results['items'][i]['artists'][0]['name'] + " - " + results['items'][i]['name']);
         $scope.suggestedTracks.push({'id': results['items'][i]['id'],
                                     'name': results['items'][i]['name'],
-                                    'artist': results['items'][i]['artists'][0]['name'],
-                                    'uri': results['items'][i]['uri']});
+                                    'artist': results['items'][i]['artists'][0]['name']});
       }
+
       return $scope.display_data;
     })
   }
