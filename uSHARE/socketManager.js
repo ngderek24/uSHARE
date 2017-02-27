@@ -40,28 +40,44 @@ io.on("connection", function(socket){
   });
 
   socket.on('add_track', function(data){
-    console.log(data);
-    socket.to(pid).emit('playlist_changed', { track: { id: data['id'],
-                                                        name: data['name'],
-                                                        artist: data['artist']
-                                                      },
-                                               status: "add"
-                                             });
-    socket.emit('playlist_changed', { track: { id: data['id'],
-                                                    name: data['name'],
-                                                    artist: data['artist']
-                                        },
-                                      status: "add"
-                                    });
+    var track = data['track'];
+    var uri = 'spotify:track:' + track.id;
+
+    spotifyApi.addTrack(pid, uri, function(error, response, body) {
+      if (error) {
+        //TODO ERROR HANDLING
+      } else {
+        socket.to(pid).emit('playlist_changed', { track: { id: track.id,
+                                                          name: track.name,
+                                                          artist: track.artist,
+                                                        },
+                                                 status: "add"
+                                               });
+        socket.emit('playlist_changed', { track: { id: track.id,
+                                                  name: track.name,
+                                                  artist: track.artist,
+                                                },
+                                          status: "add"
+                                        });
+      }
+    });    
   });
 
   socket.on('remove_track', function(data){
-    socket.to(pid).emit('playlist_changed', { track: { id: data['id'] },
+    var uri = 'spotify:track:' + data.id;
+
+    spotifyApi.removeTrack(pid, uri, function(error, response, body) {
+      if (error) {
+        //TODO ERROR HANDLING
+      } else {
+        socket.to(pid).emit('playlist_changed', { track: { id: data['id'] },
                                                status: "remove"
                                              });
-    socket.emit('playlist_changed', { track: { id: data['id'] },
-                                      status: "remove"
-                                    });
+        socket.emit('playlist_changed', { track: { id: data['id'] },
+                                          status: "remove"
+                                        });
+      }
+    });    
   });
 
   socket.on('close_room', function(data){
