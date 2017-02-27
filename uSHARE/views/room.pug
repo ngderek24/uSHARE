@@ -2,11 +2,13 @@ extends layout
 
 block content
   div(class="container-padded-top")
-    page-header(title=title)
+    page-header(title=title)    
     div(class="container-centered-horizontal container-padded" ng-controller='roomController' ng-init="metadata=" + metadata)    
+      div(class="container-centered-horizontal container-padded text-centered" ng-if='accessCode' id="room-status") Room access code: {{ accessCode }}
+      div(class="container-centered-horizontal container-padded text-centered" ng-if='!accessCode' id="room-status") This room is public.
       div(ng-controller='modalController as m' ng-init="m.initModal(" + metadata +  ")")    
         form(class="container-centered-horizontal text-centered")
-          input(class="btn btn-danger" type="submit" ng-value="m.modalData.btnLabel" ng-click="m.open()")
+          input(class="btn button-secondary" type="submit" ng-value="m.modalData.btnLabel" ng-click="m.open()")
 
       div(class="modal fade" id="searchSongToAdd" role="dialog")
         div(class="modal-dialog modal-lg")
@@ -23,10 +25,10 @@ block content
                   i(class="glyphicon glyphicon-remove")
                   span No Results Found
             div(class="modal-footer")
-              button(type="button" ng-click="add()" class="btn btn-default" data-dismiss="modal") Add
-              button(type="button" class="btn btn-default" data-dismiss="modal") Close
+              button(type="button" ng-click="add()" class="btn button-primary" data-dismiss="modal") Add
+              button(type="button" class="btn" data-dismiss="modal") Close
 
-      button(class="btn btn-primary" ng-click="reset()" type="button" data-toggle="modal" data-target="#searchSongToAdd") Search & Add Songs to Playlist
+      button(class="btn button-primary" ng-click="reset()" type="button" data-toggle="modal" data-target="#searchSongToAdd") Search & Add Songs to Playlist
 
       div(class="container-centered-horizontal table-container")
         table(class="table table-striped")
@@ -40,4 +42,4 @@ block content
               td {{::track.name}}
               td {{::track.artist}}
               td(class="table-column-small")
-                button(class="btn btn-danger" ng-click="remove(track.id)") X
+                button(class="btn button-secondary" ng-click="remove(track.id)") X

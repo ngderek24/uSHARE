@@ -4,11 +4,17 @@ html, body{
 }
 
 body{
+	color: #73706d !important;
 	font: 1em helvetica;
 }
 
 a {
-  color: #00B7FF;
+  color: white;
+}
+
+label{
+	font-weight: 500;
+	margin-right: 10px;
 }
 
 .container-centered-vertical{
@@ -66,4 +72,40 @@ a {
 .header-form{
 	text-align: right;
 	padding-top: 20px;
+}
+
+.button-primary{
+	background-color: #66B9BF;
+	color: white;	
+}
+
+.button-secondary{
+	background-color: #EEAA7B;
+	color: white;
+}
+
+.button-large{
+	font-size: 1.5em !important;
+	font-weight: 500 !important;
+	letter-spacing: 0.075em !important;
+}
+
+.button-normal{
+	font-size: 1.15em !important;
+}
+
+.btn:hover, .btn:focus, a:hover, a:focus{
+	color: white !important;
+}
+
+#directory-container{
+	margin-top: 50px;
+}
+
+#join-form{
+	margin-bottom: 20px;
+}
+
+#room-status{
+	font-size: 1.25em;
 }
