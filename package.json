@@ -1,7 +1,6 @@
 {
   "name": "ushare",
   "version": "0.0.0",
-  "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -18,5 +17,8 @@
     "serve-favicon": "~2.3.2",
     "socket.io": "~1.7.2",
     "yarn": "^0.19.1"
+  },
+  "engines": {
+    "node": "6.9.5"
   }
 }
