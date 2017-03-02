@@ -51,8 +51,15 @@ router.get('/promptRoomOption', function(req, res, next) {
         res.render('error', { message: 'Could not get playlists',
                               error: error });
       } else {
+        console.log(roomIdsToPlaylistIds);
+        console.log(JSON.stringify(roomIdsToPlaylistIds));
+
         res.render('promptCreateOrJoin', { title: 'uSHARE',
-                                            playlists: JSON.stringify(body)});
+                                            playlists: JSON.stringify(body),
+                                            roomIdsToPlaylistIds: JSON.stringify(roomIdsToPlaylistIds),
+                                            roomIdsToRoomNames: JSON.stringify(roomIdsToRoomNames),
+                                            privateRooms: JSON.stringify(Object.keys(privateRoomIdsToAccessCodes)),
+                                          });
       }
     });
   }
@@ -195,29 +202,29 @@ router.get('/logout', function(req, res, next){
   res.redirect('/');
 });
 
-router.get('/addTrack/:roomId/:playlistId/:uri', function(req, res, next) {
-  spotifyApi.addTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
-    console.log(body);
-    if (error) {
-      res.render('error', { message: 'Could not add track',
-                            error: error });
-    } else {
-      res.redirect('/room/' + req.params.roomId);
-    }
-  });
-});
+// router.get('/addTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+//   spotifyApi.addTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+//     console.log(body);
+//     if (error) {
+//       res.render('error', { message: 'Could not add track',
+//                             error: error });
+//     } else {
+//       res.redirect('/room/' + req.params.roomId);
+//     }
+//   });
+// });
 
-router.get('/removeTrack/:roomId/:playlistId/:uri', function(req, res, next) {
-  spotifyApi.removeTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
-    console.log(body);
-    if (error) {
-      res.render('error', { message: 'Could not add track',
-                            error: error });
-    } else {
-      res.redirect('/room/' + req.params.roomId);
-    }
-  });
-});
+// router.get('/removeTrack/:roomId/:playlistId/:uri', function(req, res, next) {
+//   spotifyApi.removeTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
+//     console.log(body);
+//     if (error) {
+//       res.render('error', { message: 'Could not add track',
+//                             error: error });
+//     } else {
+//       res.redirect('/room/' + req.params.roomId);
+//     }
+//   });
+// });
 
 function generateRandomString(length) {
   var text = '';

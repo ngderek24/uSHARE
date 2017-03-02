@@ -3,5 +3,5 @@ div(class="modal-header")
 div(class="modal-body")
   div(ng-if='modalData.modalBody!=""') {{ modalData.modalBody }}
 div(class="modal-footer")
-  button(class="btn button-secondary" type="button" ng-click="ok()") Ok
+  button(class="btn button-primary" type="button" ng-click="ok()") Ok
   button(class="btn btn-default" type="button" ng-if="!modalData.hideCancel" ng-click="cancel()") Cancel

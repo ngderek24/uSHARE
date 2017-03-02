@@ -3,18 +3,15 @@ var request = require('request');
 
 function SpotifyApi() {}
 
-// /*
-//   Dev credentials
-// */
 var clientID = '211aae652e324de8b0237d55d0fa3030';
 var clientSecret = '691fdcd98e054278aac41672f119f9dd';
 var redirectURI = 'http://localhost:3000/spotifyTest/callback';
 
 /*
-  Deploy credentials: remember to swap in 
+  Deploy credentials: remember to swap in
 */
 // var clientID = 'b31f86324a784e9db76255fc4467363d';
-// var clientSecret = 'aa7c45b74ed44e079e04abe681b48874';
+// var clientSecret = 'b31f86324a784e9db76255fc4467363d';
 // var redirectURI = 'https://radiant-peak-71546.herokuapp.com/spotifyTest/callback';
 
 
@@ -40,8 +37,7 @@ SpotifyApi.prototype = {
         client_id: clientID,
         scope: scopes,
         redirect_uri: redirectURI,
-        state: state,
-        show_dialog: true,
+        state: state
       }));
   },
 

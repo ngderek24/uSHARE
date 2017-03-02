@@ -22,6 +22,7 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     console.log($scope.accessCode)
 
     $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id });
+    // $scope.socket = io('https://radiant-peak-71546.herokuapp.com', { query: "pid=" + $scope.playlist_id });
 
     $scope.socket.on('test', function(data){
       console.log(data.body);
@@ -63,6 +64,7 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
   }
 
   $scope.add = function(){
+    console.log("HELLO");
     for(var i = 0; i < $scope.suggestedTracks.length; i++){
       if($scope.suggestedTracks[i].artist + ' - ' + $scope.suggestedTracks[i].name == $scope.searchString){
         $scope.socket.emit('add_track', { 
@@ -116,14 +118,6 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
         }
     };
     return -1;
-  }
-
-  $scope.submit = function() {
-    var selected = $scope.suggestedTracks[arrayObjectIndexOf($scope.display_data, $scope.searchString)];
-    $scope.add(selected['id'], selected['name'], selected['artist']);
-    $scope.searchString = "";
-
-    $window.location.href = '/addTrack/' + $scope.rid + '/' + $scope.playlist_id + '/' + selected['uri'];
   }
 
 }]);
