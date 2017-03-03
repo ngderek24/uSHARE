@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
   if(req.session.rid){
     res.redirect('/room/' + req.session.rid);
   }
-  else if((spotifyApi.getUserID() && spotifyApi.getUserID().length > 0) && 
+  else if((req.session.uid && req.session.uid.length > 0) && 
       (req.session.loggedIn && req.session.loggedIn == true)){
     res.redirect('/promptRoomOption');
   }
@@ -35,6 +35,7 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
+  // console.log(req.session.uid);
   if(req.session.rid){
     res.redirect('/room/' + req.session.rid);
   }
@@ -42,18 +43,15 @@ router.get('/promptRoomOption', function(req, res, next) {
   req.session.loggedIn = true;
   res.locals.loggedIn = true;
 
-  var userId = spotifyApi.getUserID();
+  var userId = req.session.uid;
   if (userId in hostIdsToRoomIds) {
     res.redirect('/room/' + hostIdsToRoomIds[userId]);
   } else {
-    spotifyApi.getPlaylists(function(error, response, body) {
+    spotifyApi.getPlaylists(req.session.uid, function(error, response, body) {
       if (error) {
         res.render('error', { message: 'Could not get playlists',
                               error: error });
       } else {
-        console.log(roomIdsToPlaylistIds);
-        console.log(JSON.stringify(roomIdsToPlaylistIds));
-
         res.render('promptCreateOrJoin', { title: 'uSHARE',
                                             playlists: JSON.stringify(body),
                                             roomIdsToPlaylistIds: JSON.stringify(roomIdsToPlaylistIds),
@@ -66,8 +64,8 @@ router.get('/promptRoomOption', function(req, res, next) {
 });
 
 router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', function(req, res, next) {
-  var userId = spotifyApi.getUserID();
-  spotifyApi.createPlaylist(req.params.playlistName, function(error, response, body) {
+  var userId = req.session.uid;
+  spotifyApi.createPlaylist(req.session.uid, req.params.playlistName, function(error, response, body) {
     if (error)
       res.render('error', { message: 'Cannot create playlist',
                         error: error });
@@ -94,7 +92,7 @@ router.get('/newPlaylist/:roomName/:playlistName/:isPrivate/:accessCode', functi
 });
 
 router.get('/playlist/:roomName/:playlistId/:isPrivate/:accessCode?', function(req, res, next) {
-  var userId = spotifyApi.getUserID();
+  var userId = req.session.uid;
   var roomId = generateRandomString(10);
   while (roomId in roomIdsToPlaylistIds)
     roomId = generateRandomString(10);
@@ -138,7 +136,7 @@ router.get('/room/:roomId', function(req, res, next) {
   var roomId = req.params.roomId;
   req.session.rid = roomId;
 
-  var role = spotifyApi.getUserID() in hostIdsToRoomIds ? "host" : "guest";
+  var role = req.session.uid in hostIdsToRoomIds ? "host" : "guest";
 
   if (roomId in roomIdsToPlaylistIds) {
     var metadata = {
@@ -147,9 +145,15 @@ router.get('/room/:roomId', function(req, res, next) {
       playlistId: roomIdsToPlaylistIds[roomId],
     }
 
+    for(var key in hostIdsToRoomIds){
+      if(hostIdsToRoomIds[key] == roomId){
+        metadata["hostId"] = key;
+        break;
+      }
+    }
+
     if (roomId in privateRoomIdsToAccessCodes){
-      metadata["accessCode"] = privateRoomIdsToAccessCodes[roomId];
-      console.log(metadata);
+      metadata["accessCode"] = privateRoomIdsToAccessCodes[roomId];      
     }
 
     res.render('room', { 
@@ -171,7 +175,7 @@ router.get('/closeRoom/:rid', function(req, res, next){
     }
   }
 
-  delete hostIdsToRoomIds[spotifyApi.getUserID()];
+  delete hostIdsToRoomIds[req.session.uid];
   
   for (privateRoomId in privateRoomIdsToAccessCodes) {
     if (privateRoomId == rid) {    
@@ -196,9 +200,8 @@ router.get('/leaveRoom', function(req, res, next){
 });
 
 router.get('/logout', function(req, res, next){
-  req.session.loggedIn = false;
   res.locals.loggedIn = false;
-  req.session.rid = null;
+  req.session.destroy();
   res.redirect('/');
 });
 

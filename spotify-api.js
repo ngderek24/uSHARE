@@ -16,11 +16,10 @@ var redirectURI = 'http://localhost:3000/spotifyTest/callback';
 var scopes = 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative';
 var stateKey = 'spotify_auth_state';
 
+//literally never do this irl
+var userIdsToAccessTokens = new Object();
+
 function SpotifyApi() {
-  var accessToken = '';
-  var refreshToken = '';
-  var userID = '';
-  
   this.setup = function() {};
 
   // Prompts user to login to spotify
@@ -35,7 +34,8 @@ function SpotifyApi() {
         client_id: clientID,
         scope: scopes,
         redirect_uri: redirectURI,
-        state: state
+        state: state,
+        show_dialog: true,
       }));
   };
 
@@ -69,8 +69,8 @@ function SpotifyApi() {
       request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
 
-          accessToken = body.access_token;
-          refreshToken = body.refresh_token;
+          var accessToken = body.access_token;
+          // refreshToken = body.refresh_token;
 
           var options = {
             url: 'https://api.spotify.com/v1/me',
@@ -84,13 +84,11 @@ function SpotifyApi() {
             if (error) {
               console.log(error);
             }
-            userID = body.id;
 
-            res.redirect('/promptRoomOption?' +
-              querystring.stringify({
-                id: userID,
-                access_token: accessToken
-              }));
+            userIdsToAccessTokens[body.id] = accessToken;
+            req.session.uid = body.id;
+
+            res.redirect('/promptRoomOption?');
           });
         } else {
           res.redirect('/#' +
@@ -103,7 +101,7 @@ function SpotifyApi() {
   };
 
   // Creats a new playlist with the provided name
-  this.createPlaylist = function(playlistName, callback) {
+  this.createPlaylist = function(userID, playlistName, callback) {
     var bodyParams = {
       'name': playlistName,
       'public': true
@@ -113,7 +111,7 @@ function SpotifyApi() {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + userIdsToAccessTokens[userID]
       },
       body: JSON.stringify(bodyParams)
     };
@@ -133,12 +131,12 @@ function SpotifyApi() {
   };
 
   // Get a list of user's playlists
-  this.getPlaylists = function(callback) {
+  this.getPlaylists = function(userID, callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + userIdsToAccessTokens[userID]
       }
     };
 
@@ -173,7 +171,9 @@ function SpotifyApi() {
   };
 
   // Get tracks from a playlist
-  this.getPlaylist = function(ownerID, playlistID, ownerAccessToken, callback) {
+  this.getPlaylist = function(ownerID, playlistID, callback) {
+  	var ownerAccessToken = userIdsToAccessTokens[ownerID];
+
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID) +
            "/playlists/" + encodeURIComponent(playlistID) +
@@ -201,7 +201,9 @@ function SpotifyApi() {
 
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
-  this.addTrack = function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
+  this.addTrack = function(ownerID, playlistID, trackURI, callback) {
+  	var ownerAccessToken = userIdsToAccessTokens[ownerID];
+
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
@@ -228,7 +230,9 @@ function SpotifyApi() {
 
   // Remove track with the given URI from the playlist
   // If there are multiple instances of the same track, all are removed.
-  this.removeTrack = function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
+  this.removeTrack = function(ownerID, playlistID, trackURI, callback) {
+   	var ownerAccessToken = userIdsToAccessTokens[ownerID];
+
     var bodyParams = {
       "tracks": [ {
         "uri": trackURI
@@ -260,7 +264,7 @@ function SpotifyApi() {
   };
 
   // Search for upto 10 tracks that matches search string
-  this.searchTrack = function(searchString, callback) {
+  this.searchTrack = function(userID, searchString, callback) {
     var queryString = querystring.stringify({
         q: encodeURIComponent(searchString),
         type: "track",
@@ -271,7 +275,7 @@ function SpotifyApi() {
       url: "https://api.spotify.com/v1/search?" + queryString,
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + userIdsToAccessTokens[userID]
       }
     };
 
@@ -303,11 +307,11 @@ function SpotifyApi() {
     });
   };
 
-  // Get user id.
-  // Instantaneous, does not require a callback.
-  this.getUserID = function() {
-    return userID;
-  };
+  // // Get user id.
+  // // Instantaneous, does not require a callback.
+  // this.getUserID = function() {
+  //   return userID;
+  // };
 }
 
 // Generates a random string containing numbers and letters
