@@ -87,15 +87,13 @@ SpotifyApi.prototype = {
               console.log(error);
             }
             userID = body.id;
-            res.redirect('/promptRoomOption');
-          });
 
-          // We can also pass the token to the browser to make requests from there
-          // res.redirect('/#' +
-          //   querystring.stringify({
-          //     access_token: accessToken,
-          //     refresh_token: refreshToken
-          //   }));
+            res.redirect('/promptRoomOption?' +
+              querystring.stringify({
+                id: userID,
+                access_token: accessToken
+              }));
+          });
         } else {
           res.redirect('/#' +
             querystring.stringify({
