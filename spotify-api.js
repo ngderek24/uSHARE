@@ -175,14 +175,14 @@ SpotifyApi.prototype = {
   },
 
   // Get tracks from a playlist
-  getPlaylist: function(playlistID, callback) {
+  getPlaylist: function(ownerID, playlistID, ownerAccessToken, callback) {
     var options = {
-      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) +
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID) +
            "/playlists/" + encodeURIComponent(playlistID) +
            "?fields=href,name,owner(!href,external_urls),tracks.items(added_by.id,track(id,name,artists(name),album(name)))",
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + ownerAccessToken
       }
     };
 
@@ -203,13 +203,13 @@ SpotifyApi.prototype = {
 
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
-  addTrack: function(playlistID, trackURI, callback) {
+  addTrack: function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
     var options = {
-      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + ownerAccessToken
       },
       body: JSON.stringify([trackURI])
     };
@@ -230,7 +230,7 @@ SpotifyApi.prototype = {
 
   // Remove track with the given URI from the playlist
   // If there are multiple instances of the same track, all are removed.
-  removeTrack: function(playlistID, trackURI, callback) {
+  removeTrack: function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
     var bodyParams = {
       "tracks": [ {
         "uri": trackURI
@@ -238,11 +238,11 @@ SpotifyApi.prototype = {
     };
 
     var options = {
-      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID)
+      url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
       headers: {
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + accessToken
+        "Authorization" : "Bearer " + ownerAccessToken
       },
       body: JSON.stringify(bodyParams)
     };
