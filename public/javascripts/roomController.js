@@ -21,10 +21,10 @@ angular.module('ushare').controller("roomController", ['$scope', 'scopeSharer', 
     $scope.playlist_id = metadata.playlistId;
     $scope.accessCode = metadata.accessCode;
 
-    $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id 
-                                                      + "&hostId=" + $scope.host_id });
-    // $scope.socket = io('https://radiant-peak-71546.herokuapp.com', { query: "pid=" + $scope.playlist_id 
-    //                                                                         + "&hostId=" + $scope.hostId });
+    // $scope.socket = io('http://localhost:3000', { query: "pid=" + $scope.playlist_id
+    //                                                   + "&hostId=" + $scope.host_id });
+    $scope.socket = io('https://frozen-dawn-86624.herokuapp.com', { query: "pid=" + $scope.playlist_id
+                                                                            + "&hostId=" + $scope.host_id });
 
     $scope.socket.emit('get_playlist', {});
 

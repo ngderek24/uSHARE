@@ -1,9 +1,12 @@
 var querystring = require('querystring');
 var request = require('request');
 
-var clientID = '211aae652e324de8b0237d55d0fa3030';
-var clientSecret = '691fdcd98e054278aac41672f119f9dd';
-var redirectURI = 'http://localhost:3000/spotifyTest/callback';
+/*
+  Dev credentials
+*/
+// var clientID = '211aae652e324de8b0237d55d0fa3030';
+// var clientSecret = '691fdcd98e054278aac41672f119f9dd';
+// var redirectURI = 'http://localhost:3000/spotifyTest/callback';
 
 /*
   Deploy credentials: remember to swap in
@@ -11,6 +14,13 @@ var redirectURI = 'http://localhost:3000/spotifyTest/callback';
 // var clientID = 'b31f86324a784e9db76255fc4467363d';
 // var clientSecret = 'b31f86324a784e9db76255fc4467363d';
 // var redirectURI = 'https://radiant-peak-71546.herokuapp.com/spotifyTest/callback';
+
+/*
+  Deploy credentials: Jason's
+*/
+var clientID = 'bc9ab48b5cd84dd1ae22abfe498b7d41';
+var clientSecret = '99b2dbb4d77a4aeebf5b51b392ccc715';
+var redirectURI = 'https://frozen-dawn-86624.herokuapp.com/spotifyTest/callback';
 
 
 var scopes = 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative';
@@ -173,6 +183,10 @@ function SpotifyApi() {
   // Get tracks from a playlist
   this.getPlaylist = function(ownerID, playlistID, callback) {
   	var ownerAccessToken = userIdsToAccessTokens[ownerID];
+    console.log("owner id: " + ownerID);
+    console.log("playlist id: " + playlistID);
+    console.log(userIdsToAccessTokens);
+    console.log("owner access token: " + ownerAccessToken);
 
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID) +

@@ -35,7 +35,7 @@ router.get('/login', spotifyApi.promptLogin);
 router.get('/spotifyTest/callback', spotifyApi.requestAccessToken);
 
 router.get('/promptRoomOption', function(req, res, next) {
-  // console.log(req.session.uid);
+  console.log("req session uid: " + req.session.uid);
   if(req.session.rid){
     res.redirect('/room/' + req.session.rid);
   }
@@ -151,6 +151,9 @@ router.get('/room/:roomId', function(req, res, next) {
         break;
       }
     }
+
+    console.log("printing metadata!");
+    console.log(metadata);
 
     if (roomId in privateRoomIdsToAccessCodes){
       metadata["accessCode"] = privateRoomIdsToAccessCodes[roomId];      
