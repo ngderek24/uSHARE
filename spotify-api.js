@@ -1,8 +1,6 @@
 var querystring = require('querystring');
 var request = require('request');
 
-function SpotifyApi() {}
-
 var clientID = '211aae652e324de8b0237d55d0fa3030';
 var clientSecret = '691fdcd98e054278aac41672f119f9dd';
 var redirectURI = 'http://localhost:3000/spotifyTest/callback';
@@ -17,16 +15,16 @@ var redirectURI = 'http://localhost:3000/spotifyTest/callback';
 
 var scopes = 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative';
 var stateKey = 'spotify_auth_state';
-var accessToken = '';
-var refreshToken = '';
-var userID = '';
 
-SpotifyApi.prototype = {
+function SpotifyApi() {
+  var accessToken = '';
+  var refreshToken = '';
+  var userID = '';
   
-  setup: function() {},
+  this.setup = function() {};
 
   // Prompts user to login to spotify
-  promptLogin: function(req, res) {
+  this.promptLogin = function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
 
@@ -39,9 +37,9 @@ SpotifyApi.prototype = {
         redirect_uri: redirectURI,
         state: state
       }));
-  },
+  };
 
-  requestAccessToken: function(req, res) {
+  this.requestAccessToken = function(req, res) {
     // your application requests refresh and access tokens
     // after checking the state parameter
     var code = req.query.code || null;
@@ -102,10 +100,10 @@ SpotifyApi.prototype = {
         }
       });
     }
-  },
+  };
 
   // Creats a new playlist with the provided name
-  createPlaylist: function(playlistName, callback) {
+  this.createPlaylist = function(playlistName, callback) {
     var bodyParams = {
       'name': playlistName,
       'public': true
@@ -132,10 +130,10 @@ SpotifyApi.prototype = {
         }
       }
     });
-  },
+  };
 
   // Get a list of user's playlists
-  getPlaylists: function(callback) {
+  this.getPlaylists = function(callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(userID) + "/playlists",
       headers: {
@@ -172,10 +170,10 @@ SpotifyApi.prototype = {
         }
       }
     });
-  },
+  };
 
   // Get tracks from a playlist
-  getPlaylist: function(ownerID, playlistID, ownerAccessToken, callback) {
+  this.getPlaylist = function(ownerID, playlistID, ownerAccessToken, callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID) +
            "/playlists/" + encodeURIComponent(playlistID) +
@@ -199,11 +197,11 @@ SpotifyApi.prototype = {
         }
       }
     });
-  },
+  };
 
   // Adds a track to the playlist.
   // trackURI must be in the following form: 'spotify:track:<uri>'
-  addTrack: function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
+  this.addTrack = function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
     var options = {
       url: "https://api.spotify.com/v1/users/" + encodeURIComponent(ownerID)
            + "/playlists/" + encodeURIComponent(playlistID) + "/tracks",
@@ -226,11 +224,11 @@ SpotifyApi.prototype = {
         }
       }
     });
-  },
+  };
 
   // Remove track with the given URI from the playlist
   // If there are multiple instances of the same track, all are removed.
-  removeTrack: function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
+  this.removeTrack = function(ownerID, playlistID, trackURI, ownerAccessToken, callback) {
     var bodyParams = {
       "tracks": [ {
         "uri": trackURI
@@ -259,10 +257,10 @@ SpotifyApi.prototype = {
         }
       }
     });
-  },
+  };
 
   // Search for upto 10 tracks that matches search string
-  searchTrack: function(searchString, callback) {
+  this.searchTrack = function(searchString, callback) {
     var queryString = querystring.stringify({
         q: encodeURIComponent(searchString),
         type: "track",
@@ -303,14 +301,14 @@ SpotifyApi.prototype = {
         callback(bodyObj.error);
       }
     });
-  },
+  };
 
   // Get user id.
   // Instantaneous, does not require a callback.
-  getUserID: function() {
+  this.getUserID = function() {
     return userID;
-  }
-};
+  };
+}
 
 // Generates a random string containing numbers and letters
 function generateRandomString(length) {

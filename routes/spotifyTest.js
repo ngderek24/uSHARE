@@ -88,6 +88,7 @@ router.get('/remove', function(req, res, next) {
 
 router.get('/userid', function(req, res, next) {
   res.render('spotifyTest', { title: spotifyApi.getUserID() });
+  console.log(spotifyApi.getUserID());
 });
 
 module.exports = router;
