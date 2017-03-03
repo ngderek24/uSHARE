@@ -2,6 +2,8 @@
 
 CSM117 W17 Course Project
 
+### Live Link: https://frozen-dawn-86624.herokuapp.com
+
 ### General Info to Know:
 1. Install Node.js and Yarn on your machine
   * Node download can be found here: https://nodejs.org/en/download/
