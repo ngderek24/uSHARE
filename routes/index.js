@@ -120,9 +120,10 @@ router.get('/joinRoom/:roomId/:accessCode?', function(req, res, next) {
     res.redirect('/promptRoomOption');
   }
   else {
-    if (req.params.accessCode && req.params.accessCode != privateRoomIdsToAccessCodes[req.params.roomId])
+    if (req.params.accessCode == undefined || req.params.accessCode != privateRoomIdsToAccessCodes[req.params.roomId]) {
       console.log('Invalid access code');
-    else{
+      res.redirect('/promptRoomOption');
+    } else {
       res.redirect('/room/' + req.params.roomId);
     }
   }
@@ -207,30 +208,6 @@ router.get('/logout', function(req, res, next){
   req.session.destroy();
   res.redirect('/');
 });
-
-// router.get('/addTrack/:roomId/:playlistId/:uri', function(req, res, next) {
-//   spotifyApi.addTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
-//     console.log(body);
-//     if (error) {
-//       res.render('error', { message: 'Could not add track',
-//                             error: error });
-//     } else {
-//       res.redirect('/room/' + req.params.roomId);
-//     }
-//   });
-// });
-
-// router.get('/removeTrack/:roomId/:playlistId/:uri', function(req, res, next) {
-//   spotifyApi.removeTrack(req.params.playlistId, req.params.uri, function(error, response, body) {
-//     console.log(body);
-//     if (error) {
-//       res.render('error', { message: 'Could not add track',
-//                             error: error });
-//     } else {
-//       res.redirect('/room/' + req.params.roomId);
-//     }
-//   });
-// });
 
 function generateRandomString(length) {
   var text = '';
