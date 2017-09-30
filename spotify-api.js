@@ -1,18 +1,6 @@
 var querystring = require('querystring');
 var request = require('request');
 
-var clientID = '211aae652e324de8b0237d55d0fa3030';
-var clientSecret = '691fdcd98e054278aac41672f119f9dd';
-var redirectURI = 'http://localhost:3000/spotifyTest/callback';
-
-/*
-  Deploy credentials: remember to swap in
-*/
-// var clientID = 'b31f86324a784e9db76255fc4467363d';
-// var clientSecret = 'b31f86324a784e9db76255fc4467363d';
-// var redirectURI = 'https://radiant-peak-71546.herokuapp.com/spotifyTest/callback';
-
-
 var scopes = 'playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative';
 var stateKey = 'spotify_auth_state';
 
